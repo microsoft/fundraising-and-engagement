@@ -1,0 +1,12 @@
+{
+  "reusable": "false",
+  "paymentMethod": {
+    "name": "John M",
+    "expiryMonth": "12",
+    "expiryYear": "2021",
+    "cardNumber": "4444333322221111",
+    "type": "Card",
+    "cvc": "121"
+  },
+  "clientKey": "T_C_21936c14-ec37-4754-bb6a-f76a41b706bd"
+}

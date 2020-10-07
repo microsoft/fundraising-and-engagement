@@ -1,0 +1,12 @@
+{
+  "InvoiceIdentifier": "MIS10CAD56",
+  "ServiceKey": "sk_test_PRrTgyUCG40udjqWx74VVnvQ00eqjc5JPT",
+  "StripeCustomerId": "cus_FZzqyYFeP8PSzr",
+  "StripeCardId": "card_1F4prEDYYgfsfEeL26eGpXhF",
+  "Amount": 100.0000,
+  "IsoCurrencyCode": "CAD",
+  "NextFailedRetry": null,
+  "CurrentRetry": 0,
+  "RetryInterval": 5,
+  "MaxRetries": 5
+}

@@ -1,0 +1,14 @@
+{
+  "InvoiceIdentifier": "MISEE75E4B",
+  "AgentCode": "AURA88",
+  "Password": "AURA88",
+  "IpAddress": null,
+  "IatsCustomerCode": "A26094674",
+  "Amount": 3.0000,
+  "IsoCurrencyCode": null,
+  "NextFailedRetry": null,
+  "CurrentRetry": 0,
+  "RetryInterval": 2,
+  "MaxRetries": 3,
+  "PaymentTypeCode": 703650002
+}

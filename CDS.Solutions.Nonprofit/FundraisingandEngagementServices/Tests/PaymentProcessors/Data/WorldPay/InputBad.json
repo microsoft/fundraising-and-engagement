@@ -1,0 +1,17 @@
+{
+  "InvoiceIdentifier": "MISC015E32",
+  "ServiceKey": "T_S_1a203d1c-3084-491f-96b7-de6336ae25fd",
+  "FirstName": "WorldPay",
+  "LastName": "Testing",
+  "Address1": "WorldPay",
+  "Address2": "Street2",
+  "City": "City",
+  "PostalCode": "ZIP",
+  "WorldPayToken": "",
+  "Amount": 10.0000,
+  "IsoCurrencyCode": "CAD",
+  "NextFailedRetry": "0001-01-01T00:00:00",
+  "CurrentRetry": 0,
+  "RetryInterval": 5,
+  "MaxRetries": 5
+}

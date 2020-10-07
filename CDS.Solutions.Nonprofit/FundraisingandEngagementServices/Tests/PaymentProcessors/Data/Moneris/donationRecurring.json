@@ -1,0 +1,17 @@
+{
+  "BillingLine2": null,
+  "MonerisStoreId": "monca02841",
+  "ServiceKey": "jymOpeuGFILe3VPX9GYt",
+  "IsTestMode": true,
+  "ServiceModeOptionSetId": 703650000,
+  "IsBankProcess": false,
+  "FirstName": "John",
+  "LastName": "MacFlip",
+  "CcExpMmYy": "1020",
+  "CreditCardNo": "4111111111111111",
+  "Amount": "2",
+  "BillingPostalCode": "L0K 234",
+  "BillingLine1": "66 Bay St.",
+  "IsRecurring": true,
+  "GivingFrequency": null
+}

@@ -1,0 +1,587 @@
+﻿{
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"clientName": {
+			"type": "string",
+			"minLength": 1,
+			"metadata": {
+				"description": "Client short name.  Eg: dwb"
+			}
+		},
+		"env": {
+			"type": "string",
+			"minLength": 1,
+			"metadata": {
+				"description": "Environment short name"
+			},
+			"defaultValue": "prod",
+			"allowedValues": [ "dev", "qa", "test", "uat", "prod" ]
+		},
+		"sqlServerAdminLogin": {
+			"type": "string",
+			"minLength": 3,
+			"metadata": {
+				"description": "Admin account user name to be used to login into SQL Server"
+			}
+		},
+		"sqlServerAdminLoginPassword": {
+			"type": "securestring",
+			"minLength": 8,			
+			"metadata": {
+				"description": "Admin account password. Must contains upper and lower letters, with numbers and symbols"
+			}
+		},
+		"databasePassword": {
+			"type": "securestring",
+			"minLength": 8,
+			"metadata": {
+				"description": "Database password (will be used by application to connect to the database). Must contains upper and lower letters, with numbers and symbols"
+			}
+		},
+		"CrmApplicationID": {
+			"type": "string",
+			"minLength": 25,
+			"maxLength": 50,
+			"metadata": {
+				"description": "This information should be obtain from your Azure Portal. Eg: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+			}
+		},
+		"CrmApplicationKey": {
+			"type": "string",
+			"minLength": 10,
+			"metadata": {
+				"description": "This information should be obtain from your Azure Portal"
+			}
+		},
+		"CrmOrganizationURL": {
+			"type": "string",
+			"minLength": 10,
+			"metadata": {
+				"description": "Eg: https://abcdefgh.api.crm3.dynamics.com"
+			}
+		},
+		"CrmTenantId": {
+			"type": "string",
+			"minLength": 25,
+			"maxLength": 50,
+			"metadata": {
+				"description": "This information should be obtain from your Dynamics instance. Eg: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+			}
+		}
+	},
+	"variables": {
+		"appServicePlan": "[concat(parameters('clientName'), '-AppServicePlan')]",
+		"sqlServerName": "[concat(toLower(parameters('clientName')), '-sqlserver-', parameters('env'))]",
+		"sqlDatabaseName": "[concat(toLower(parameters('clientName')), '-db-', parameters('env'))]",
+		"sqlDatabaseUserName": "[concat(parameters('clientName'), '_', parameters('env'), '_user')]",
+		"vaultName": "[concat(parameters('clientName'), '-vault-', parameters('env'))]",
+		"storageName": "[concat(toLower(parameters('clientName')), 'storage', parameters('env'))]",
+		"backgroundServicesName": "[concat(parameters('clientName'), '-BackgroundServices-', parameters('env'))]",
+		"webAppName": "[concat(parameters('clientName'), '-WebApp-', parameters('env'))]",
+		"apiAppName": "[concat(parameters('clientName'), '-ApiApp-', parameters('env'))]",
+		"recurringDonationAppName": "[concat(parameters('clientName'), '-RecurringDonationApp-', parameters('env'))]"
+	},
+	"resources": [
+		{
+			"type": "Microsoft.Storage/storageAccounts",
+			"name": "[variables('storageName')]",
+			"kind": "Storage",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2019-06-01",
+			"dependsOn": [],
+			"sku": {
+				"name": "Standard_LRS"
+			},
+			"tags": {
+				"displayName": "Storage"
+			}
+		},
+		{
+			"name": "[variables('sqlServerName')]",
+			"type": "Microsoft.Sql/servers",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2014-04-01",
+			"dependsOn": [],
+			"tags": {
+				"displayName": "Sql Server"
+			},
+			"properties": {
+				"administratorLogin": "[parameters('sqlServerAdminLogin')]",
+				"administratorLoginPassword": "[parameters('sqlServerAdminLoginPassword')]"
+			},
+			"resources": [
+				{
+					"name": "AllowAllWindowsAzureIps",
+					"type": "firewallrules",
+					"location": "[resourceGroup().location]",
+					"apiVersion": "2014-04-01",
+					"dependsOn": [
+						"[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+					],
+					"properties": {
+						"startIpAddress": "0.0.0.0",
+						"endIpAddress": "0.0.0.0"
+					}
+				},
+				{
+					"name": "[variables('sqlDatabaseName')]",
+					"type": "databases",
+					"location": "[resourceGroup().location]",
+					"apiVersion": "2014-04-01",
+					"dependsOn": [
+						"[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+					],
+					"tags": {
+						"displayName": "Sql-Database"
+					},
+					"properties": {
+						"collation": "SQL_Latin1_General_CP1_CI_AS",
+						"edition": "Standard",
+						"maxSizeBytes": "107374182400",
+						"requestedServiceObjectiveName": "S1"
+					}
+				}
+			]
+		},
+		{
+			"name": "[variables('appServicePlan')]",
+			"type": "Microsoft.Web/serverfarms",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2018-02-01",
+			"sku": {
+				"name": "S1"
+			},
+			"dependsOn": [],
+			"tags": {
+				"displayName": "AppsServicePlan"
+			},
+			"properties": {
+				"name": "[variables('appServicePlan')]",
+				"numberOfWorkers": 1
+			}
+		},
+		{
+			"name": "[concat(variables('backgroundServicesName'), '-AI')]",
+			"type": "Microsoft.Insights/components",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2014-04-01",
+			"dependsOn": [
+			],
+			"tags": {
+				"displayName": "Component Background Services-AI"
+			},
+			"properties": {
+			}
+		},
+		{
+			"name": "[concat(variables('apiAppName'), '-AI')]",
+			"type": "Microsoft.Insights/components",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2014-04-01",
+			"dependsOn": [
+			],
+			"tags": {
+				"displayName": "Component ApiApp-AI"
+			},
+			"properties": {
+			}
+		},
+		{
+			"name": "[concat(variables('recurringDonationAppName'), '-AI')]",
+			"type": "Microsoft.Insights/components",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2014-04-01",
+			"dependsOn": [
+			],
+			"tags": {
+				"displayName": "Component RecurringDonationApp-AI"
+			},
+			"properties": {
+			}
+		},
+		{
+			"name": "[variables('backgroundServicesName')]",
+			"type": "Microsoft.Web/sites",
+			"location": "[resourceGroup().location]",
+			"kind": "functionapp",
+			"apiVersion": "2018-11-01",
+			"identity": {
+				"type": "SystemAssigned"
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]",
+				"[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]",
+				"[resourceId('Microsoft.Insights/components', concat(variables('backgroundServicesName'), '-AI'))]"
+			],
+			"tags": {
+				"[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', variables('appServicePlan')))]": "Resource",
+				"displayName": "Background Services"
+			},
+			"properties": {
+				"name": "[variables('backgroundServicesName')]",
+				"serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
+				"siteConfig": {
+					"alwaysOn": true,
+					"ftpsState": "Disabled",
+					"localMySqlEnabled": false,
+					"appSettings": [
+						{
+							"name": "FUNCTIONS_EXTENSION_VERSION",
+							"value": "~3"
+						},
+						{
+							"name": "FUNCTIONS_WORKER_RUNTIME",
+							"value": "dotnet"
+						},
+						{
+							"name": "KeyVaultName",
+							"value": "[variables('vaultName')]"
+						},
+						{
+							"name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+							"value": "[reference(resourceId('Microsoft.Insights/components', concat(variables('backgroundServicesName'), '-AI')), '2014-04-01').InstrumentationKey]"
+						},
+						{
+							"name": "ApplicationInsights:InstrumentationKey",
+							"value": "[reference(resourceId('Microsoft.Insights/components', concat(variables('backgroundServicesName'), '-AI')), '2014-04-01').InstrumentationKey]"
+						},
+						{
+							"name": "AzureWebJobsStorage",
+							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2019-06-01').keys[0].value)]"
+						},
+						{
+							"name": "AzureStorage",
+							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2019-06-01').keys[0].value)]"
+						},
+						{
+							"name": "Crm:CrmApplicationID",
+							"value": "[parameters('CrmApplicationID')]"
+						},
+						{
+							"name": "Crm:CrmApplicationKey",
+							"value": "[parameters('CrmApplicationKey')]"
+						},
+						{
+							"name": "Crm:CrmOrganizationURL",
+							"value": "[parameters('CrmOrganizationURL')]"
+						},
+						{
+							"name": "Crm:CrmTenantId",
+							"value": "[parameters('CrmTenantId')]"
+						}
+					],
+					"connectionStrings": [
+						{
+							"name": "PaymentContext",
+							"connectionString": "[concat('Data Source=', variables('sqlServerName'), '.database.windows.net;Initial Catalog=', variables('sqlDatabaseName'))]",
+							"type": "SQLAzure"
+						}
+					],
+					"metadata": [
+						{
+							"name": "CURRENT_STACK",
+							"value": "dotnetcore"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "[variables('apiAppName')]",
+			"type": "Microsoft.Web/sites",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2018-11-01",
+			"identity": {
+				"type": "SystemAssigned"
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]",
+				"[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]",
+				"[resourceId('Microsoft.Insights/components', concat(variables('apiAppName'), '-AI'))]"
+			],
+			"tags": {
+				"[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', variables('appServicePlan')))]": "Resource",
+				"displayName": "ApiApp"
+			},
+			"properties": {
+				"name": "[variables('apiAppName')]",
+				"serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
+				"siteConfig": {
+					"alwaysOn": true,
+					"ftpsState": "Disabled",
+					"localMySqlEnabled": false,
+					"appSettings": [
+						{
+							"name": "KeyVaultName",
+							"value": "[variables('vaultName')]"
+						},
+						{
+							"name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+							"value": "[reference(resourceId('Microsoft.Insights/components', concat(variables('apiAppName'), '-AI')), '2014-04-01').InstrumentationKey]"
+						},
+						{
+							"name": "ApplicationInsights:InstrumentationKey",
+							"value": "[reference(resourceId('Microsoft.Insights/components', concat(variables('apiAppName'), '-AI')), '2014-04-01').InstrumentationKey]"
+						},
+						{
+							"name": "ASPNETCORE_DETAILEDERRORS",
+							"value": "true"
+						},
+						{
+							"name": "Crm:CrmApplicationID",
+							"value": "[parameters('CrmApplicationID')]"
+						},
+						{
+							"name": "Crm:CrmApplicationKey",
+							"value": "[parameters('CrmApplicationKey')]"
+						},
+						{
+							"name": "Crm:CrmOrganizationURL",
+							"value": "[parameters('CrmOrganizationURL')]"
+						},
+						{
+							"name": "Crm:CrmTenantId",
+							"value": "[parameters('CrmTenantId')]"
+						},
+						{
+							"name": "APIKeys:SaltedGatewayAPIKey",
+							"value": "\u009dnI���C*^gh,�2h�n��y�\u00028"
+						},
+						{
+							"name": "AzureImageStorage:AzureAccountKey",
+							"value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2019-06-01').keys[0].value]"
+						},
+						{
+							"name": "AzureImageStorage:AzureAccountName",
+							"value": "[variables('storageName')]"
+						},
+						{
+							"name": "AzureImageStorage:AzureContainerName",
+							"value": "imagecontainer"
+						}
+					],
+					"connectionStrings": [
+						{
+							"name": "PaymentContext",
+							"connectionString": "[concat('Data Source=', variables('sqlServerName'), '.database.windows.net;Initial Catalog=', variables('sqlDatabaseName'))]",
+							"type": "SQLAzure"
+						}
+					],
+					"metadata": [
+						{
+							"name": "CURRENT_STACK",
+							"value": "dotnetcore"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "[variables('recurringDonationAppName')]",
+			"type": "Microsoft.Web/sites",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2018-11-01",
+			"identity": {
+				"type": "SystemAssigned"
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]",
+				"[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]",
+				"[resourceId('Microsoft.Insights/components', concat(variables('recurringDonationAppName'), '-AI'))]"
+			],
+			"tags": {
+				"[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', variables('appServicePlan')))]": "Resource",
+				"displayName": "RecurringDonationApp"
+			},
+			"properties": {
+				"name": "[variables('recurringDonationAppName')]",
+				"serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
+				"siteConfig": {
+					"alwaysOn": true,
+					"ftpsState": "Disabled",
+					"localMySqlEnabled": false,
+					"appSettings": [
+						{
+							"name": "KeyVaultName",
+							"value": "[variables('vaultName')]"
+						},
+						{
+							"name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+							"value": "[reference(resourceId('Microsoft.Insights/components', concat(variables('recurringDonationAppName'), '-AI')), '2014-04-01').InstrumentationKey]"
+						},
+						{
+							"name": "ApplicationInsights:InstrumentationKey",
+							"value": "[reference(resourceId('Microsoft.Insights/components', concat(variables('recurringDonationAppName'), '-AI')), '2014-04-01').InstrumentationKey]"
+						}
+					],
+					"connectionStrings": [
+						{
+							"name": "PaymentContext",
+							"connectionString": "[concat('Data Source=', variables('sqlServerName'), '.database.windows.net;Initial Catalog=', variables('sqlDatabaseName'))]",
+							"type": "SQLAzure"
+						}
+					],
+					"metadata": [
+						{
+							"name": "CURRENT_STACK",
+							"value": "dotnetcore"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "[concat(variables('appServicePlan'), '-', resourceGroup().name)]",
+			"type": "Microsoft.Insights/autoscalesettings",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2014-04-01",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]"
+			],
+			"tags": {
+				"[concat('hidden-link:', resourceId('Microsoft.Web/serverfarms', variables('appServicePlan')))]": "Resource",
+				"displayName": "AI AutoScale"
+			},
+			"properties": {
+				"name": "[concat(variables('appServicePlan'), '-', resourceGroup().name)]",
+				"profiles": [
+					{
+						"name": "Default",
+						"capacity": {
+							"minimum": 1,
+							"maximum": 2,
+							"default": 1
+						},
+						"rules": [
+							{
+								"metricTrigger": {
+									"metricName": "CpuPercentage",
+									"metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
+									"timeGrain": "PT1M",
+									"statistic": "Average",
+									"timeWindow": "PT10M",
+									"timeAggregation": "Average",
+									"operator": "GreaterThan",
+									"threshold": 80
+								},
+								"scaleAction": {
+									"direction": "Increase",
+									"type": "ChangeCount",
+									"value": 1,
+									"cooldown": "PT10M"
+								}
+							},
+							{
+								"metricTrigger": {
+									"metricName": "CpuPercentage",
+									"metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]",
+									"timeGrain": "PT1M",
+									"statistic": "Average",
+									"timeWindow": "PT1H",
+									"timeAggregation": "Average",
+									"operator": "LessThan",
+									"threshold": 60
+								},
+								"scaleAction": {
+									"direction": "Decrease",
+									"type": "ChangeCount",
+									"value": 1,
+									"cooldown": "PT1H"
+								}
+							}
+						]
+					}
+				],
+				"enabled": false,
+				"targetResourceUri": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlan'))]"
+			}
+		},
+		{
+			"type": "Microsoft.KeyVault/vaults",
+			"name": "[variables('vaultName')]",
+			"apiVersion": "2016-10-01",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"enabledForDeployment": false,
+				"enabledForDiskEncryption": false,
+				"enabledForTemplateDeployment": true,
+				"tenantId": "[subscription().tenantId]",
+				"accessPolicies": [
+					{
+						"tenantId": "[subscription().tenantId]",
+						"objectId": "[reference(resourceId('Microsoft.Web/sites', variables('apiAppName')), '2018-11-01', 'Full').identity.principalId]",
+						"permissions": {
+							"secrets": [ "get", "list" ]
+						}
+					},
+					{
+						"tenantId": "[subscription().tenantId]",
+						"objectId": "[reference(resourceId('Microsoft.Web/sites', variables('backgroundServicesName')), '2018-11-01', 'Full').identity.principalId]",
+						"permissions": {
+							"secrets": [ "get", "list" ]
+						}
+					},
+					{
+						"tenantId": "[subscription().tenantId]",
+						"objectId": "[reference(resourceId('Microsoft.Web/sites', variables('recurringDonationAppName')), '2018-11-01', 'Full').identity.principalId]",
+						"permissions": {
+							"secrets": [ "get", "list" ]
+						}
+					}
+				],
+				"sku": {
+					"name": "Standard",
+					"family": "A"
+				}
+			},
+			"tags": {
+				"displayName": "Key Vault"
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', variables('apiAppName'))]",
+				"[resourceId('Microsoft.Web/sites', variables('backgroundServicesName'))]",
+				"[resourceId('Microsoft.Web/sites', variables('recurringDonationAppName'))]"
+			]
+		},
+		{
+			"type": "Microsoft.KeyVault/vaults/secrets",
+			"name": "[concat(variables('vaultName'), '/ConnectionSecrets--PaymentContextUserID')]",
+			"apiVersion": "2016-10-01",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+			],
+			"properties": {
+				"value": "[variables('sqlDatabaseUserName')]"
+			}
+		},
+		{
+			"type": "Microsoft.KeyVault/vaults/secrets",
+			"name": "[concat(variables('vaultName'), '/ConnectionSecrets--PaymentContextPassword')]",
+			"apiVersion": "2016-10-01",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+			],
+			"properties": {
+				"value": "[parameters('databasePassword')]"
+			}
+		},
+		{
+			"type": "Microsoft.KeyVault/vaults/secrets",
+			"name": "[concat(variables('vaultName'), '/EncryptionUtilsConfig--PassPhrase')]",
+			"apiVersion": "2016-10-01",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+			],
+			"properties": {
+				"value": ""
+			}
+		}
+	]
+}

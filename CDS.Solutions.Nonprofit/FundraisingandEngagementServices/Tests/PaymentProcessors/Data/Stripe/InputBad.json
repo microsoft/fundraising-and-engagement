@@ -1,0 +1,12 @@
+{
+  "InvoiceIdentifier": "MISF94B228",
+  "ServiceKey": "sk_test_yTS3swz0tSk977K7rCYK3yZP",
+  "StripeCustomerId": "cus_EunmUpKO31fdIe",
+  "StripeCardId": "22uZtnhKb68wFE2HFeycbSBM2",
+  "Amount": 10.0000,
+  "IsoCurrencyCode": "CAD",
+  "NextFailedRetry": "0001-01-01T00:00:00",
+  "CurrentRetry": 0,
+  "RetryInterval": 5,
+  "MaxRetries": 5
+}

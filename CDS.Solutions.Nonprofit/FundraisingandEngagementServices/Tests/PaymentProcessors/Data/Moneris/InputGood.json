@@ -1,0 +1,13 @@
+{
+  "StoreId": "monca02841",
+  "ServiceKey": "jymOpeuGFILe3VPX9GYt",
+  "IsTestMode": true,
+  "CustID": "7W8Ptq5nOrDewY2foPzAYpcO1",
+  "MonerisAuthToken": "7W8Ptq5nOrDewY2foPzAYpcO1",
+  "Amount": 5.0000,
+  "IsoCurrencyCode": null,
+  "NextFailedRetry": "0001-01-01T00:00:00",
+  "CurrentRetry": 0,
+  "RetryInterval": 5,
+  "MaxRetries": 5
+}
