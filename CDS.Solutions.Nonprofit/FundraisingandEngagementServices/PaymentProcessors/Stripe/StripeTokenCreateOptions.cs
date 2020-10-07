@@ -1,0 +1,16 @@
+﻿using Newtonsoft.Json;
+
+namespace PaymentProcessors.Stripe
+{
+	public class StripeTokenCreateOptions
+	{
+		[JsonProperty("customer")]
+		public string CustomerId { get; set; }
+
+		[JsonProperty("card")]
+		public StripeCreditCardOptions Card { get; set; }
+
+		[JsonProperty("bank_account")]
+		public BankAccountOptions BankAccount { get; set; }
+	}
+}
