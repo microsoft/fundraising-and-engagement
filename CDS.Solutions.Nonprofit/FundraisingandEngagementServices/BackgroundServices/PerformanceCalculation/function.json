@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "timerTrigger",
+      "direction": "in",
+      "name": "performanceCalculationTimer",
+      "schedule": "0 0 23 * * *"
+    }
+  ],
+  "disabled": false
+}

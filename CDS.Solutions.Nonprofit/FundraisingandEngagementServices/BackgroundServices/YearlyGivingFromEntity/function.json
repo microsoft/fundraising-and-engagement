@@ -1,0 +1,20 @@
+{
+  "scriptFile": "../bin/FundraisingandEngagement.BackgroundServices.dll",
+  "entryPoint": "FundraisingandEngagement.BackgroundServices.Program.RunYearlyGivingCalculationAsync",
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "name": "request",
+      "direction": "in",
+      "methods": [ "get" ],
+      "route": "yearlyGiving/{entityName}/{id:guid}"
+    },
+    {
+      "type": "http",
+      "name": "res",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}

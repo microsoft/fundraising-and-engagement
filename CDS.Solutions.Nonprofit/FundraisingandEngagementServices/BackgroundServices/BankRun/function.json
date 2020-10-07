@@ -1,0 +1,20 @@
+{
+	"scriptFile": "../bin/FundraisingandEngagement.BackgroundServices.dll",
+	"entryPoint": "FundraisingandEngagement.BackgroundServices.Program.RunBankAsync",
+	"bindings": [
+		{
+			"authLevel": "function",
+			"type": "httpTrigger",
+			"name": "request",
+			"direction": "in",
+			"methods": [ "get" ],
+			"route": "bankRun/{action}/{id:guid}"
+		},
+		{
+			"type": "http",
+			"name": "res",
+			"direction": "out"
+		}
+	],
+	"disabled": false
+}

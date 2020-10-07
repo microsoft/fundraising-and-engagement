@@ -1,0 +1,12 @@
+{
+	"bindings": [
+		{
+			"authLevel": "anonymous",
+			"type": "timerTrigger",
+			"direction": "in",
+			"name": "myTimer",
+			"schedule": "0 */30 * * * *"
+		}
+	],
+	"disabled": false
+}

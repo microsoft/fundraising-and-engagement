@@ -1,0 +1,20 @@
+{
+	"scriptFile": "../bin/FundraisingandEngagement.BackgroundServices.dll",
+	"entryPoint": "FundraisingandEngagement.BackgroundServices.Program.RunEventReceiptingAsync",
+	"bindings": [
+		{
+			"authLevel": "function",
+			"type": "httpTrigger",
+			"name": "request",
+			"direction": "in",
+			"methods": [ "get" ],
+			"route": "eventReceipting/{entityName}/{entityId:guid}"
+		},
+		{
+			"type": "http",
+			"name": "res",
+			"direction": "out"
+		}
+	],
+	"disabled": false
+}

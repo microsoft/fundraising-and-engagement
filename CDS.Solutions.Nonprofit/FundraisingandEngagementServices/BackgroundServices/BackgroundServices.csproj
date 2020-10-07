@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>90A39605-1E22-4280-82DE-582AF63DE96D</UserSecretsId>
+    <StartupObject>FundraisingandEngagement.BackgroundServices.Program</StartupObject>
+    <AssemblyName>FundraisingandEngagement.BackgroundServices</AssemblyName>
+    <RootNamespace>FundraisingandEngagement.BackgroundServices</RootNamespace>
+    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine.Hosting" Version="0.3.0-alpha.20253.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Jobs\Triggered\BankRun\run.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Jobs\Triggered\BankRun\Settings.job">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Jobs\Triggered\DataPush\run.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Jobs\Triggered\DataPush\Settings.job">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="BankRun\function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DataPushHttp\function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DataPush\function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DataPush\Run.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="EventReceipting\function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PerformanceCalculation\function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PerformanceCalculation\Run.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="YearlyGivingFromEntity\function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="YearlyGivingFullCalculation\function.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="YearlyGivingFullCalculation\Run.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Data\Data.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
+  </ItemGroup>
+  <Target Name="PostPublish" BeforeTargets="Publish">
+    <MakeDir Directories="$(PublishDir)bin" />
+    <Exec Command="move $(PublishDir)*.* $(PublishDir)bin" />
+    <Copy SourceFiles="$(PublishDir)bin/$(AssemblyName).deps.json" DestinationFiles="$(PublishDir)bin/function.deps.json" Condition="Exists('$(PublishDir)bin/$(AssemblyName).deps.json')" />
+    <Exec Command="move $(PublishDir)runtimes $(PublishDir)bin/runtimes" />
+    <Move SourceFiles="$(PublishDir)bin/host.json" DestinationFiles="$(PublishDir)host.json" Condition="Exists('$(PublishDir)bin/host.json')" />
+    <Message Text="Azure Function 'bin' folder has been created and populated" />
+  </Target>
+</Project>
