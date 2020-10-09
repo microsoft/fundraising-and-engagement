@@ -1,4 +1,4 @@
-### CDS Solutions Nonprofit Summary
+### Source Files Overview
 This folder contains the source files necessary to build all Fundraising and Engagement components.
 
 | Folder | Description |
