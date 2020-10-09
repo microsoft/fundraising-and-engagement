@@ -1,6 +1,7 @@
 ### CDS Solutions Nonprofit Summary
+This folder contains the source files necessary to build all Fundraising and Engagement components.
 
-| Solution Folder | Description |
+| Folder | Description |
 | - | - |
 | FundraisingandEngagement | A Microsoft Dynamics 365 solution unpacked to include both managed and unmanaged files. |
 | FundraisingandEngagementResources | The source files that are used to develop the web resources and plug-ins that are used in the Fundraising and Engagement App. |
