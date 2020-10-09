@@ -1,9 +1,9 @@
 # Fundraising and Engagement
-Hello ISVs, SIs, Partners and Nonprofits - Your success is our goal. This repository helps you to connect, extend, build and contribute to Fundraising and Engagement.
+Hello ISVs, SIs, Partners and Nonprofits - Your success is our goal. This repository helps you to connect, extend, build, and contribute to Fundraising and Engagement.
 
 ## Overview of Fundraising and Engagement
 
-Microsoft Tech for Social Impact provides affordable and accessible cloud technology to nonprofits, and delivers purpose-built solutions for nonprofit partners and organizations by leveraging the power of the entire Microsoft platform including Business Applications, Modern Workplace, and Azure technology.
+Microsoft Tech for Social Impact provides affordable and accessible cloud technology to nonprofits, and delivers purpose-built solutions for nonprofit partners and organizations by leveraging the power of the entire Microsoft platform including Business Applications, Modern Workplace, and Azure technologies.
 
 Fundraising and Engagement for Dynamics 365 Sales, a Microsoft solution built with MISSION CRM, helps nonprofits modernize donor and constituent engagement to increase mission impact.
 
