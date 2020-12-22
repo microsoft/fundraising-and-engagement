@@ -45,7 +45,7 @@ namespace API
             services.AddApplicationInsightsTelemetry();
             services.AddHttpContextAccessor();
 
-            services.AddTransient<SaltString>();
+            services.AddTransient<HashString>();
             services.AddScoped<DataFactory>();
 
             services

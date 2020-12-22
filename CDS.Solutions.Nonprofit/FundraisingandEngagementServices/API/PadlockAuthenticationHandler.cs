@@ -11,12 +11,12 @@ namespace API
 {
 	public sealed class PadlockAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 	{
-		private readonly SaltString saltString;
+		private readonly HashString hashString;
 
-		public PadlockAuthenticationHandler(SaltString saltString, IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-			: base(options, logger, encoder, clock)
+		public PadlockAuthenticationHandler(HashString hashString, IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
+					: base(options, logger, encoder, clock)
 		{
-			this.saltString = saltString;
+			this.hashString = hashString;
 		}
 
 		protected override Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -29,7 +29,7 @@ namespace API
 				return Task.FromResult(AuthenticateResult.Fail("Padlock key is null"));
 			}
 
-			if (!this.saltString.ApiKeyMatched(key))
+			if (!this.hashString.ApiKeyMatched(key))
 			{
 				Logger.LogWarning($"Invalid Padlock key '{key}'");
 				return Task.FromResult(AuthenticateResult.Fail("Padlock key is invalid"));
