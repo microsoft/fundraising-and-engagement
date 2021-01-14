@@ -4,7 +4,7 @@ The table below provides an overview of the sample contents.
 | Sample | Description |
 | - | - |
 | FundraisingandEngagement.PowerBI.Templates.zip | Contains several Power BI report templates and accompanying script to generate views |
-| FundraisingandEngagement.Sample.Data.zip | Sample data for Fundraising and Engagement |
+| FundraisingandEngagement.Sample.Data.zip | Sample data for Fundraising and Engagement (see [Deployment Guide](../docs/FundraisingandEngagement.Deployment.Guide.docx) for installation instructinos) |
 
 ### Power BI Report Templates Included
 
