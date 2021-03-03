@@ -18,6 +18,13 @@
 			"defaultValue": "prod",
 			"allowedValues": [ "dev", "qa", "test", "uat", "prod" ]
 		},
+		"apiPadlockToken": {
+			"type": "securestring",
+			"minLength": 8,
+			"metadata": {
+				"description": "Hashed version of API padlock token"
+			}
+		},
 		"sqlServerAdminLogin": {
 			"type": "string",
 			"minLength": 3,
@@ -27,7 +34,7 @@
 		},
 		"sqlServerAdminLoginPassword": {
 			"type": "securestring",
-			"minLength": 8,			
+			"minLength": 8,
 			"metadata": {
 				"description": "Admin account password. Must contains upper and lower letters, with numbers and symbols"
 			}
@@ -48,7 +55,7 @@
 			}
 		},
 		"CrmApplicationKey": {
-			"type": "string",
+			"type": "securestring",
 			"minLength": 10,
 			"metadata": {
 				"description": "This information should be obtain from your Azure Portal"
@@ -348,7 +355,7 @@
 						},
 						{
 							"name": "APIKeys:SaltedGatewayAPIKey",
-							"value": "\u009dnI���C*^gh,�2h�n��y�\u00028"
+							"value": "[base64ToString(parameters('apiPadlockToken'))]"
 						},
 						{
 							"name": "AzureImageStorage:AzureAccountKey",
