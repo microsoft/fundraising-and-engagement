@@ -1,39 +1,23 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
-using FundraisingandEngagement.Models.Entities;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ResponseController : ControllerBase
     {
-        private static ResponseWorker _responseWorker;
+        private static IFactoryFloor<Response> _responseWorker;
 
-        public ResponseController(DataFactory dataFactory)
+        public ResponseController(IDataFactory dataFactory)
         {
-            _responseWorker = (ResponseWorker)dataFactory.GetDataFactory<Response>();
-        }
-
-        // GET api/Response/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var responseRecord = _responseWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(responseRecord);
-
-            return json;
+            _responseWorker = dataFactory.GetDataFactory<Response>();
         }
 
         // POST api/Response/CreateResponse (Body is JSON)

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace FundraisingandEngagement.Models.Enums
 {
-	public enum AccountType
-	{
-		Household = 844060000,
-		Organization = 844060001
-	}
+    public enum AccountType
+    {
+        Household = 844060000,
+        Organization = 844060001
+    }
 }

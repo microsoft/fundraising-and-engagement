@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using FundraisingandEngagement.Models.Entities;
+﻿using FundraisingandEngagement.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace FundraisingandEngagement.Data
 {
-	public partial class PaymentContext : DbContext
+    public partial class PaymentContext : DbContext
     {
         public PaymentContext()
         {
@@ -41,19 +41,15 @@ namespace FundraisingandEngagement.Data
 
         public virtual DbSet<Receipt> Receipt { get; set; }
 
-        //public virtual DbSet<ReceiptEmailLog> ReceiptEmailLogs { get; set; }
-
         public virtual DbSet<ReceiptLog> ReceiptLog { get; set; }
 
         public virtual DbSet<ReceiptStack> ReceiptStack { get; set; }
 
         public virtual DbSet<Refund> Refund { get; set; }
         public virtual DbSet<Registration> Registration { get; set; }
-        //public virtual DbSet<RelatedImage> RelatedImage { get; set; }
         public virtual DbSet<Response> Response { get; set; }
         public virtual DbSet<Sponsorship> Sponsorship { get; set; }
         public virtual DbSet<SyncLog> SyncLogs { get; set; }
-        //public virtual DbSet<TermsOfReference> TermsOfReference { get; set; }
         public virtual DbSet<Ticket> Ticket { get; set; }
         public virtual DbSet<Transaction> Transaction { get; set; }
         public virtual DbSet<TributeOrMemory> TributeOrMemory { get; set; }
@@ -63,12 +59,12 @@ namespace FundraisingandEngagement.Data
         public virtual DbSet<EventPreference> EventPreference { get; set; }
         public virtual DbSet<RegistrationPreference> RegistrationPreference { get; set; }
         public virtual DbSet<EventTable> EventTable { get; set; }
-        public virtual DbSet<Payment> Payments { get; set; }
-        //public virtual DbSet<PageOrder> PageOrder { get; set; }
         public virtual DbSet<Note> Note { get; set; }
-		public virtual DbSet<DonorCommitment> DonorCommitment { get; set; }
+        public virtual DbSet<DonorCommitment> DonorCommitment { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public virtual DbSet<DataverseSyncToken> DataverseSyncToken { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
             modelBuilder.HasDefaultSchema("dbo");
@@ -156,25 +152,23 @@ namespace FundraisingandEngagement.Data
                 entity.Property(e => e.msnfp_year4_giving).HasColumnType("money");
                 entity.Property(e => e.msnfp_lifetimegivingsum).HasColumnType("money");
 
-				entity.HasOne(d => d.msnfp_LastEventPackage)
+                entity.HasOne(d => d.msnfp_LastEventPackage)
                     .WithMany(p => p.Account)
                     .HasForeignKey(d => d.msnfp_LastEventPackageId)
-                    .HasConstraintName("FK__Account__LastEventPackageId__0A688BB2");
+                    .HasConstraintName("FK__Account__LastEventPackageId__0A688BB2")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.msnfp_LastTransaction)
                     .WithMany(p => p.Account)
                     .HasForeignKey(d => d.msnfp_LastTransactionId)
-                    .HasConstraintName("FK__Account__LastTransactionId__0A688BB3");
+                    .HasConstraintName("FK__Account__LastTransactionId__0A688BB3")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.msnfp_PrimaryMembership)
                     .WithMany(p => p.Account)
                     .HasForeignKey(d => d.msnfp_PrimaryMembershipId)
-                    .HasConstraintName("FK__Account__PrimaryMembershipId__0A688BB4");
-
-                entity.HasOne(d => d.ParentAccount)
-                    .WithMany(p => p.ChildAccount)
-                    .HasForeignKey(d => d.ParentAccountId)
-                    .HasConstraintName("FK__Account__ParentAccountId__0A688BB5");
+                    .HasConstraintName("FK__Account__PrimaryMembershipId__0A688BB4")
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Configuration>(entity =>
@@ -326,27 +320,31 @@ namespace FundraisingandEngagement.Data
                 entity.Property(e => e.msnfp_year4_giving).HasColumnType("money");
                 entity.Property(e => e.msnfp_lifetimegivingsum).HasColumnType("money");
 
-				entity.HasOne(d => d.msnfp_LastEventPackage)
+                entity.HasOne(d => d.msnfp_LastEventPackage)
                     .WithMany(p => p.Contact)
                     .HasForeignKey(d => d.msnfp_LastEventPackageId)
-                    .HasConstraintName("FK__Contact__LastEventPackageId__0A688BB6");
+                    .HasConstraintName("FK__Contact__LastEventPackageId__0A688BB6")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.msnfp_LastTransaction)
                     .WithMany(p => p.Contact)
                     .HasForeignKey(d => d.msnfp_LastTransactionId)
-                    .HasConstraintName("FK__Contact__LastTransactionId__0A688BB7");
+                    .HasConstraintName("FK__Contact__LastTransactionId__0A688BB7")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.msnfp_PrimaryMembership)
                     .WithMany(p => p.Contact)
                     .HasForeignKey(d => d.msnfp_PrimaryMembershipId)
-                    .HasConstraintName("FK__Contact__PrimaryMembershipId__0A688BB8");
+                    .HasConstraintName("FK__Contact__PrimaryMembershipId__0A688BB8")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.msnfp_household)
-	                .WithMany(p => p.HouseholdMember)
-	                .HasForeignKey(d => d.msnfp_householdid)
-	                .HasConstraintName("FK__Contact__HouseHold__0A688BB9");
+                    .WithMany(p => p.HouseholdMember)
+                    .HasForeignKey(d => d.msnfp_householdid)
+                    .HasConstraintName("FK__Contact__HouseHold__0A688BB9")
+                    .OnDelete(DeleteBehavior.SetNull);
 
-			});
+            });
 
             modelBuilder.Entity<Designation>(entity =>
             {
@@ -354,7 +352,7 @@ namespace FundraisingandEngagement.Data
 
                 entity.Property(e => e.Name).HasMaxLength(160);
 
-				entity.Property(e => e.StatusCode).HasColumnName("StatusReason");
+                entity.Property(e => e.StatusCode).HasColumnName("StatusReason");
 
                 // Deprecated: entity.Property(e => e.DesignationFilter);
 
@@ -427,11 +425,6 @@ namespace FundraisingandEngagement.Data
                     .WithMany(p => p.Event)
                     .HasForeignKey(d => d.ConfigurationId)
                     .HasConstraintName("FK__Event__Configura__00DF2177");
-
-                entity.HasOne(d => d.TermsOfReference)
-                    .WithMany(p => p.Events)
-                    .HasForeignKey(d => d.TermsOfReferenceId)
-                    .HasConstraintName("FK__Event__TermsOfRe__01D345B0");
             });
 
             modelBuilder.Entity<EventDisclaimer>(entity =>
@@ -606,7 +599,7 @@ namespace FundraisingandEngagement.Data
                 entity.Property(e => e.AmountNonReceiptable).HasColumnType("money");
                 entity.Property(e => e.AmountReceipted).HasColumnType("money");
 
-				entity.Property(e => e.Date).HasColumnType("datetime2");
+                entity.Property(e => e.Date).HasColumnType("datetime2");
 
                 entity.Property(e => e.FromAmount).HasColumnType("money");
 
@@ -786,8 +779,6 @@ namespace FundraisingandEngagement.Data
 
                 entity.Property(e => e.CcLast4).HasMaxLength(100);
 
-                entity.Property(e => e.CcExpDate).HasColumnType("datetime2");
-
                 entity.Property(e => e.CreatedOn).HasColumnType("datetime2");
 
                 entity.Property(e => e.DeletedDate).HasColumnType("datetime2");
@@ -815,7 +806,7 @@ namespace FundraisingandEngagement.Data
                 entity.Property(e => e.TransactionResult).HasMaxLength(100);
 
                 entity.Property(e => e.AbaFinancialInstitutionName).HasMaxLength(3);
-                
+
                 entity.Property(e => e.NameAsItAppearsOnTheAccount).HasMaxLength(100);
 
                 entity.HasOne(d => d.PaymentProcessor)
@@ -846,9 +837,9 @@ namespace FundraisingandEngagement.Data
                 entity.Property(e => e.IatsPassword).HasMaxLength(100);
 
                 entity.Property(e => e.MonerisStoreId).HasMaxLength(100);
-                entity.Property(e => e.MonerisApiKey).HasMaxLength(100);
+                entity.Property(e => e.MonerisApiKey).HasMaxLength(500);
 
-                entity.Property(e => e.StripeServiceKey).HasMaxLength(100);
+                entity.Property(e => e.StripeServiceKey).HasMaxLength(500);
 
                 entity.Property(e => e.WorldPayServiceKey).HasMaxLength(100);
 
@@ -1050,10 +1041,6 @@ namespace FundraisingandEngagement.Data
                     .HasForeignKey(d => d.ReceiptStackId)
                     .HasConstraintName("FK__Receipt__Receipt__7755B73D");
 
-                entity.HasOne(d => d.ReplacesReceipt)
-                    .WithMany(p => p.InverseReplacesReceipt)
-                    .HasForeignKey(d => d.ReplacesReceiptId)
-                    .HasConstraintName("FK__Receipt__Replace__793DFFAF");
             });
 
             modelBuilder.Entity<ReceiptLog>(entity =>
@@ -1188,21 +1175,21 @@ namespace FundraisingandEngagement.Data
                 entity.Property(e => e.TableNumber).HasMaxLength(100);
             });
 
-			modelBuilder.Entity<Payment>(entity =>
-			{
-				entity.Property(e => e.PaymentId).HasDefaultValueSql("(newid())");
-				entity.Property(e => e.TransactionFraudCode).HasMaxLength(100);
-				entity.Property(e => e.TransactionIdentifier).HasMaxLength(100);
-				entity.Property(e => e.TransactionResult).HasMaxLength(100);
-				entity.Property(e => e.InvoiceIdentifier).HasMaxLength(100);
-				entity.Property(e => e.ChequeNumber).HasMaxLength(100);
-				entity.Property(e => e.Name).HasMaxLength(100);
-				entity.Property(e => e.Amount).HasColumnType("money");
-				entity.Property(e => e.AmountRefunded).HasColumnType("money");
-				entity.Property(e => e.AmountBalance).HasColumnType("money");
-			});
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.Property(e => e.PaymentId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.TransactionFraudCode).HasMaxLength(100);
+                entity.Property(e => e.TransactionIdentifier).HasMaxLength(100);
+                entity.Property(e => e.TransactionResult).HasMaxLength(100);
+                entity.Property(e => e.InvoiceIdentifier).HasMaxLength(100);
+                entity.Property(e => e.ChequeNumber).HasMaxLength(100);
+                entity.Property(e => e.Name).HasMaxLength(100);
+                entity.Property(e => e.Amount).HasColumnType("money");
+                entity.Property(e => e.AmountRefunded).HasColumnType("money");
+                entity.Property(e => e.AmountBalance).HasColumnType("money");
+            });
 
-			modelBuilder.Entity<Registration>(entity =>
+            modelBuilder.Entity<Registration>(entity =>
             {
                 entity.Property(e => e.RegistrationId).HasDefaultValueSql("(newid())");
 
@@ -1303,17 +1290,20 @@ namespace FundraisingandEngagement.Data
                 entity.HasOne(d => d.PaymentSchedule)
                     .WithMany(p => p.Response)
                     .HasForeignKey(d => d.PaymentScheduleId)
-                    .HasConstraintName("FK__Response__Paymen__7EF6D905");
+                    .HasConstraintName("FK__Response__Paymen__7EF6D905")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.RegistrationPackage)
                     .WithMany(p => p.Response)
                     .HasForeignKey(d => d.RegistrationPackageId)
-                    .HasConstraintName("FK__Response__Regist__7FEAFD3E");
+                    .HasConstraintName("FK__Response__Regist__7FEAFD3E")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.Transaction)
                     .WithMany(p => p.Response)
                     .HasForeignKey(d => d.TransactionId)
-                    .HasConstraintName("FK__Response__Transa__7E02B4CC");
+                    .HasConstraintName("FK__Response__Transa__7E02B4CC")
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Sponsorship>(entity =>
@@ -1345,27 +1335,10 @@ namespace FundraisingandEngagement.Data
                     .HasConstraintName("FK__Sponsorsh__Event__16CE6296");
 
                 entity.HasOne(d => d.EventSponsorship)
-	                .WithMany(p => p.Sponsorship)
-	                .HasForeignKey(d => d.EventSponsorshipId)
-	                .HasConstraintName("FK__Sponsorsh__Event__17C286CF");
+                    .WithMany(p => p.Sponsorship)
+                    .HasForeignKey(d => d.EventSponsorshipId)
+                    .HasConstraintName("FK__Sponsorsh__Event__17C286CF");
             });
-
-            //modelBuilder.Entity<TermsOfReference>(entity =>
-            //{
-            //    entity.Property(e => e.TermsOfReferenceId).HasDefaultValueSql("(newid())");
-
-            //    entity.Property(e => e.CreatedOn).HasColumnType("datetime2");
-
-            //    entity.Property(e => e.DeletedDate).HasColumnType("datetime2");
-
-            //    entity.Property(e => e.Identifier).HasMaxLength(100);
-
-            //    entity.Property(e => e.PrivacyUrl).HasMaxLength(100);
-
-            //    entity.Property(e => e.SyncDate).HasColumnType("datetime2");
-
-            //    entity.Property(e => e.TermsConditionsUrl).HasMaxLength(100);
-            //});
 
             modelBuilder.Entity<Ticket>(entity =>
             {
@@ -1498,38 +1471,44 @@ namespace FundraisingandEngagement.Data
 
                 entity.Property(e => e.ValidationDate).HasColumnType("datetime2");
 
-				entity.Property(e => e.StatusCode).HasColumnName("StatusReason");
+                entity.Property(e => e.StatusCode).HasColumnName("StatusReason");
 
 
                 entity.HasOne(d => d.MembershipCategory)
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.MembershipId)
-                    .HasConstraintName("FK__Transacti__Membe__625A9A58");
+                    .HasConstraintName("FK__Transacti__Membe__625A9A58")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.Membership)
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.MembershipInstanceId)
-                    .HasConstraintName("FK__Transacti__Membe__625A9A59");
+                    .HasConstraintName("FK__Transacti__Membe__625A9A59")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.Configuration)
                     .WithMany(p => p.Transaction)
                     .HasForeignKey(d => d.ConfigurationId)
-                    .HasConstraintName("FK__Transacti__Confi__625A9A57");
+                    .HasConstraintName("FK__Transacti__Confi__625A9A57")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.Event)
                     .WithMany(p => p.Transaction)
                     .HasForeignKey(d => d.EventId)
-                    .HasConstraintName("FK__Transacti__Event__65370702");
+                    .HasConstraintName("FK__Transacti__Event__65370702")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.TransactionPaymentMethod)
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.TransactionPaymentMethodId)
-                    .HasConstraintName("FK__Transacti__trans__6166761E");
+                    .HasConstraintName("FK__Transacti__trans__6166761E")
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(d => d.TransactionPaymentSchedule)
                     .WithMany(p => p.Transaction)
                     .HasForeignKey(d => d.TransactionPaymentScheduleId)
-                    .HasConstraintName("FK__Transacti__trans__634EBE90");
+                    .HasConstraintName("FK__Transacti__trans__634EBE90")
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<TributeOrMemory>(entity =>
@@ -1552,67 +1531,34 @@ namespace FundraisingandEngagement.Data
 
             modelBuilder.Entity<DonorCommitment>(entity =>
             {
-	            entity.HasKey(e => e.DonorCommitmentId);
-				entity.Property(e=>e.DonorCommitmentId).HasDefaultValueSql("(newid())");
-				entity.Property(e => e.CreatedOn).HasColumnType("datetime2");
-				entity.Property(e => e.DeletedDate).HasColumnType("datetime2");
-				entity.Property(e => e.SyncDate).HasColumnType("datetime2");
-				entity.Property(e => e.TotalAmount).HasColumnType("money");
-				entity.Property(e => e.BookDate).HasColumnType("datetime2");
-				entity.Property(e => e.TotalAmountBalance).HasColumnType("money");
+                entity.HasKey(e => e.DonorCommitmentId);
+                entity.Property(e => e.DonorCommitmentId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime2");
+                entity.Property(e => e.DeletedDate).HasColumnType("datetime2");
+                entity.Property(e => e.SyncDate).HasColumnType("datetime2");
+                entity.Property(e => e.TotalAmount).HasColumnType("money");
+                entity.Property(e => e.BookDate).HasColumnType("datetime2");
+                entity.Property(e => e.TotalAmountBalance).HasColumnType("money");
 
-			});
+            });
 
-			modelBuilder.Entity<SyncLog>().ToTable("SyncException");
+            modelBuilder.Entity<SyncLog>(entity =>
+            {
+                entity.ToTable("SyncException");
+            });
 
-            //modelBuilder.Entity<PageOrder>(entity =>
-            //{
-            //    entity.HasKey(e => e.PageOrderId);
+            modelBuilder.Entity<DataverseSyncToken>(entity =>
+            {
+                entity.HasKey(e => e.EntityLogicalName);
+                entity.Property(e => e.EntityLogicalName).HasMaxLength(200);
+                entity.Property(e => e.TokenValue).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.UpdatedOn).HasColumnType("datetime2");
+            });
 
-            //    entity.Property(e => e.PageOrderId).HasDefaultValueSql("newid()");
-
-            //    entity.Property(e => e.CreatedOn).HasColumnType("datetime2");
-
-            //    entity.Property(e => e.DeletedDate).HasColumnType("datetime2");
-
-            //    entity.Property(e => e.OrderDate).HasColumnType("datetime2");
-
-            //    entity.Property(e => e.Title).HasMaxLength(150);
-
-            //    entity.HasOne(d => d.FromDonationList)
-            //        .WithMany(p => p.FromDonationList_PageOrders)
-            //        .HasForeignKey(d => d.FromDonationListId)
-            //        .HasConstraintName("FK__PageOrder__FromDonationList__00000000");
-
-            //    entity.HasOne(d => d.ToDonationList)
-            //        .WithMany(p => p.ToDonationList_PageOrders)
-            //        .HasForeignKey(d => d.ToDonationListId)
-            //        .HasConstraintName("FK__PageOrder__ToDonationList__00000002");
-
-
-            //    entity.HasOne(d => d.FromDonationPage)
-            //        .WithMany(p => p.PageOrders)
-            //        .HasForeignKey(d => d.FromDonationPageId)
-            //        .HasConstraintName("FK__PageOrder__FromDonationPage__00000001");
-
-            //});
-
-            //modelBuilder.Entity<Note>(entity =>
-            //{
-            //    entity.HasKey(e => e.NoteId);
-            //    entity.Property(e => e.NoteId).HasDefaultValueSql("newid()");
-            //    //entity.Property(e => e.Document).HasMaxLength(4000);
-            //    entity.Property(e => e.FileName).HasMaxLength(255);
-            //    entity.Property(e => e.Description).HasMaxLength(100000);
-            //    entity.Property(e => e.Title).HasMaxLength(500);
-            //    entity.Property(e => e.MimeType).HasMaxLength(256);
-
-            //    entity.HasOne(d => d.RegardingObject)
-            //        .WithMany(p => p.Note)
-            //        .HasForeignKey(d => d.RegardingObjectId)
-            //        .HasConstraintName("FK__Note__RegardingObjectId_BankRun__0A688BB5");
-
-            //});
+            modelBuilder.Entity<TransactionCurrency>();
+            modelBuilder.Entity<BankRun>();
+            modelBuilder.Entity<BankRunSchedule>();
+            modelBuilder.Entity<Note>();
         }
     }
 }

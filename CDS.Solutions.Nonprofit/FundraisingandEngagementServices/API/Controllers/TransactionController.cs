@@ -1,48 +1,24 @@
 ﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using FundraisingandEngagement.Models.Entities;
 using System.Net;
 using System.Net.Http;
-using Newtonsoft.Json;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class TransactionController : ControllerBase
     {
-        private static TransactionWorker _transactionWorker;
+        private static IFactoryFloor<Transaction> _transactionWorker;
 
-        public TransactionController(DataFactory dataFactory)
+        public TransactionController(IDataFactory dataFactory)
         {
-            _transactionWorker = (TransactionWorker)dataFactory.GetDataFactory<Transaction>();
-            var _paymentScheduleWorker = (PaymentScheduleWorker)dataFactory.GetDataFactory<PaymentSchedule>();
-        }
-
-
-        // GET api/transaction/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if(id == null)
-            {
-                return "";
-            }
-
-            var transactionRecord = _transactionWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(transactionRecord);
-
-            return json;
-        }
-
-        [HttpGet]
-        [Route("Retrieve")]
-        public ActionResult Retrieve(string campaignId = "", string appealId = "", string packageId = "", string dateFrom = "", string dateTo = "", string cashPaymentCode = "", string paymentTypeCode = "", string preferredLanguageCode = "", string donorSegmentationCode = "", string addressPresentCode = "", string businessUnit = "")
-        {
-            return Ok(_transactionWorker.RetrieveWithCriteria(campaignId, appealId, packageId, dateFrom, dateTo, cashPaymentCode, paymentTypeCode, preferredLanguageCode, donorSegmentationCode, addressPresentCode, businessUnit));
+            _transactionWorker = dataFactory.GetDataFactory<Transaction>();
+            var _paymentScheduleWorker = dataFactory.GetDataFactory<PaymentSchedule>();
         }
 
         // POST api/transaction/CreateTransaction (Body is JSON)
@@ -70,7 +46,7 @@ namespace API.Controllers
                 }
 
                 return new HttpResponseMessage(HttpStatusCode.OK);
-                               
+
             }
             catch (Exception e)
             {
@@ -112,7 +88,7 @@ namespace API.Controllers
             }
         }
 
-               
+
         // DELETE api/transaction/5
         [HttpDelete("{id}")]
         public void Delete(Guid id)

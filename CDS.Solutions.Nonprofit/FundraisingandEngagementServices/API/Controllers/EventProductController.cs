@@ -1,39 +1,23 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
 using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class EventProductController : ControllerBase
     {
-        private static EventProductWorker _eventProductWorker;
+        private static IFactoryFloor<EventProduct> _eventProductWorker;
 
-        public EventProductController(DataFactory dataFactory)
+        public EventProductController(IDataFactory dataFactory)
         {
-            _eventProductWorker = (EventProductWorker)dataFactory.GetDataFactory<EventProduct>();
-        }
-
-        // GET api/EventProduct/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var eventProductRecord = _eventProductWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(eventProductRecord);
-
-            return json;
+            _eventProductWorker = dataFactory.GetDataFactory<EventProduct>();
         }
 
         // POST api/EventProduct/CreateEventProduct (Body is JSON)

@@ -3,9 +3,8 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	public abstract class ContactPaymentEntity : PaymentEntity
+    public interface IContactPaymentEntity
     {
-		[EntityReferenceMap("msnfp_CustomerId")]
         public Guid? CustomerId { get; set; }
 
         public int? CustomerIdType { get; set; }

@@ -1,39 +1,23 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
-using FundraisingandEngagement.Models.Entities;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class SponsorshipController : ControllerBase
     {
-        private static SponsorshipWorker _sponsorshipWorker;
+        private static IFactoryFloor<Sponsorship> _sponsorshipWorker;
 
-        public SponsorshipController(DataFactory dataFactory)
+        public SponsorshipController(IDataFactory dataFactory)
         {
-            _sponsorshipWorker = (SponsorshipWorker)dataFactory.GetDataFactory<Sponsorship>();
-        }
-
-        // GET api/Sponsorship/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var sponsorshipRecord = _sponsorshipWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(sponsorshipRecord);
-
-            return json;
+            _sponsorshipWorker = dataFactory.GetDataFactory<Sponsorship>();
         }
 
         // POST api/Sponsorship/CreateSponsorship (Body is JSON)

@@ -1,55 +1,87 @@
 ﻿using System;
 using System.Linq;
+using Data.Utils;
 using FundraisingandEngagement.Data;
 using FundraisingandEngagement.Models.Entities;
+using FundraisingandEngagement.Models.Enums;
 using Microsoft.Extensions.Logging;
 
-namespace FundraisingandEngagement
+namespace FundraisingandEngagement.BackgroundServices
 {
-	public class YearlyGivingFromEntity
-	{
-		private readonly PaymentContext dataContext;
-		private readonly ILogger logger;
-		private YearlyGivingCalculator yearlyGivingCalculator;
+    public class YearlyGivingFromEntity
+    {
+        private readonly PaymentContext _dataContext;
+        private readonly ILogger _logger;
+        private readonly IYearlyGivingCalculator _yearlyGivingCalculator;
 
-		public YearlyGivingFromEntity(PaymentContext dataContext, ILogger logger)
-		{
-			this.logger = logger;
-			this.dataContext = dataContext;
-			this.yearlyGivingCalculator = new YearlyGivingCalculator(dataContext, logger);
-		}
+        public YearlyGivingFromEntity(PaymentContext dataContext, ILogger logger, IYearlyGivingCalculator yearlyGivingCalculator)
+        {
+            this._logger = logger;
+            this._dataContext = dataContext;
+            this._yearlyGivingCalculator = yearlyGivingCalculator;
+        }
 
-		public void CalculateFromPaymentEntity(Guid entityId, string entityName)
-		{
-			this.logger.LogInformation("Entering CalculateFromPaymentEntity with entityId " + entityId + " and entityName " + entityName);
-			
-			ContactPaymentEntity? contactPaymentEntity = null;
-			if (String.Compare(entityName, "msnfp_transaction", StringComparison.OrdinalIgnoreCase) == 0)
-			{
-				this.logger.LogInformation("Looking for Transaction with Id:" + entityId);
-				contactPaymentEntity = dataContext.Transaction.FirstOrDefault(x => x.TransactionId == entityId);
-			}
-			else if (String.Compare(entityName, "msnfp_eventpackage", StringComparison.OrdinalIgnoreCase) == 0)
-			{
-				this.logger.LogInformation("Looking for Event Package with Id:" + entityId);
-				contactPaymentEntity = dataContext.EventPackage.FirstOrDefault(x => x.EventPackageId == entityId);
-			}
-			else if (String.Compare(entityName, "msnfp_donorcommitment", StringComparison.OrdinalIgnoreCase) == 0)
-			{
-				this.logger.LogInformation("Looking for Donor Commitment with Id:" + entityId);
-				contactPaymentEntity = dataContext.DonorCommitment.FirstOrDefault(x => x.DonorCommitmentId == entityId);
-			}
+        public void CalculateFromPaymentEntity(Guid entityId, string entityName)
+        {
+            this._logger.LogInformation($"Entering CalculateFromPaymentEntity with entityId {entityId} and entityName {entityName}");
 
-			if (contactPaymentEntity == null)
-			{
-				logger.LogError("No record found of type " + entityName + " with Id:" + entityId + ". Exiting.");
-				return;
-			}
+            this._yearlyGivingCalculator.SynchronizeEntitiesForYearlyGiving();
 
-			this.logger.LogInformation("Customer Id:" + contactPaymentEntity.CustomerId +", Type:" + contactPaymentEntity.CustomerIdType);
-			yearlyGivingCalculator.UpdateCustomer(contactPaymentEntity.CustomerId, contactPaymentEntity.CustomerIdType);
+            var contactPaymentEntity = getEntityToUpdate(entityId, entityName.ToLower());
+            if (contactPaymentEntity == null)
+            {
+                this._logger.LogError($"No record found of type {entityName} with Id: {entityId}. Exiting.");
+                return;
+            }
 
-			this.logger.LogInformation("CalculateFromPaymentEntity done.");
-		}
-	}
+            this._yearlyGivingCalculator.UpdateCustomer(contactPaymentEntity.CustomerId, contactPaymentEntity.CustomerIdType);
+            this._logger.LogInformation("CalculateFromPaymentEntity done.");
+        }
+
+        private IContactPaymentEntity? getEntityToUpdate(Guid entityId, string entityName)
+        {
+            if (entityName == typeof(Account).EntityLogicalName())
+            {
+                return SimpleContactPaymentEntity.Account(entityId);
+            }
+
+            if (entityName == typeof(Contact).EntityLogicalName())
+            {
+                return SimpleContactPaymentEntity.Contact(entityId);
+            }
+
+            if (entityName == typeof(Transaction).EntityLogicalName())
+            {
+                return this._dataContext.Transaction.FirstOrDefault(x => x.TransactionId == entityId);
+            }
+
+            if (entityName == typeof(EventPackage).EntityLogicalName())
+            {
+                return this._dataContext.EventPackage.FirstOrDefault(x => x.EventPackageId == entityId);
+            }
+
+            if (entityName == typeof(DonorCommitment).EntityLogicalName())
+            {
+                return this._dataContext.DonorCommitment.FirstOrDefault(x => x.DonorCommitmentId == entityId);
+            }
+
+            return null;
+        }
+
+        private class SimpleContactPaymentEntity : IContactPaymentEntity
+        {
+            public Guid? CustomerId { get; set; }
+            public int? CustomerIdType { get; set; }
+
+            public static SimpleContactPaymentEntity Contact(Guid contactId)
+            {
+                return new SimpleContactPaymentEntity { CustomerId = contactId, CustomerIdType = Models.Enums.CustomerIdType.Contact };
+            }
+
+            public static SimpleContactPaymentEntity Account(Guid accountId)
+            {
+                return new SimpleContactPaymentEntity { CustomerId = accountId, CustomerIdType = Models.Enums.CustomerIdType.Account };
+            }
+        }
+    }
 }

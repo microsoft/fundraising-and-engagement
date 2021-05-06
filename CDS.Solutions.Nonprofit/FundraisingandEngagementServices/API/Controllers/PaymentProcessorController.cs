@@ -1,43 +1,24 @@
 ﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using FundraisingandEngagement.Models.Entities;
 using System.Net;
 using System.Net.Http;
-using Newtonsoft.Json;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class PaymentProcessorController : ControllerBase
     {
-        private static PaymentProcessorWorker _paymentProcessorWorker;
+        private static IFactoryFloor<PaymentProcessor> _paymentProcessorWorker;
 
-        public PaymentProcessorController(DataFactory dataFactory)
+        public PaymentProcessorController(IDataFactory dataFactory)
         {
-            _paymentProcessorWorker = (PaymentProcessorWorker)dataFactory.GetDataFactory<PaymentProcessor>();
+            _paymentProcessorWorker = dataFactory.GetDataFactory<PaymentProcessor>();
         }
-
-
-        // GET api/PaymentProcessor/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var retrievedRecord = _paymentProcessorWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(retrievedRecord);
-
-            return json;
-        }
-
-
 
         // POST api/PaymentProcessor/CreatePaymentProcessor (Body is JSON)
         [HttpPost]

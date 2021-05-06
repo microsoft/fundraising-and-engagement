@@ -5,10 +5,10 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_Payment")]
+    [EntityLogicalName("msnfp_Payment")]
     public class Payment : PaymentEntity
     {
-		[Key]
+        [Key]
         public Guid PaymentId { get; set; }
 
         [ForeignKey(nameof(PaymentProcessor))]
@@ -22,11 +22,11 @@ namespace FundraisingandEngagement.Models.Entities
 
         public Guid? CustomerId { get; set; }
 
-		public Guid? ResponseId { get; set; }
+        public Guid? ResponseId { get; set; }
 
-		public Guid? ConfigurationId { get; set; }
+        public Guid? ConfigurationId { get; set; }
 
-		public decimal? Amount { get; set; }
+        public decimal? Amount { get; set; }
 
         public decimal? AmountRefunded { get; set; }
 
@@ -46,11 +46,11 @@ namespace FundraisingandEngagement.Models.Entities
 
         public int? CcBrandCodePayment { get; set; }
 
-		public string InvoiceIdentifier { get; set; }
+        public string InvoiceIdentifier { get; set; }
 
-		public DateTime? DateRefunded { get; set; }
+        public DateTime? DateRefunded { get; set; }
 
-		public virtual PaymentProcessor PaymentProcessor { get; set; }
+        public virtual PaymentProcessor PaymentProcessor { get; set; }
 
         public virtual PaymentMethod PaymentMethod { get; set; }
 

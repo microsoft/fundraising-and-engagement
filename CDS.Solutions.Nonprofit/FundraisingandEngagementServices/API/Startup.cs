@@ -15,7 +15,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace API
 {
-	public class Startup
+    public class Startup
     {
         public IConfiguration Configuration { get; }
 
@@ -27,18 +27,17 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<EncryptionUtilsConfig>(Configuration.GetSection("EncryptionUtilsConfig"));
             services.Configure<SaltStringConfig>(Configuration.GetSection("APIKeys"));
 
             var connectionStringBuilder = new SqlConnectionStringBuilder(Configuration.GetConnectionString("PaymentContext"));
 
-			if (!String.IsNullOrEmpty(Configuration["ConnectionSecrets:PaymentContextUserID"]))
-			{
-				connectionStringBuilder.UserID = Configuration["ConnectionSecrets:PaymentContextUserID"];
-				connectionStringBuilder.Password = Configuration["ConnectionSecrets:PaymentContextPassword"];
-			}
+            if (!String.IsNullOrEmpty(Configuration["ConnectionSecrets:PaymentContextUserID"]))
+            {
+                connectionStringBuilder.UserID = Configuration["ConnectionSecrets:PaymentContextUserID"];
+                connectionStringBuilder.Password = Configuration["ConnectionSecrets:PaymentContextPassword"];
+            }
 
-			var paymentConnectionString = connectionStringBuilder.ConnectionString;
+            var paymentConnectionString = connectionStringBuilder.ConnectionString;
 
             services.AddDbContext<PaymentContext>(options => options.UseSqlServer(paymentConnectionString, o => o.MigrationsAssembly("Data.Migrations")));
             services.AddScoped<IPaymentContext>(provider => provider.GetRequiredService<PaymentContext>());
@@ -46,7 +45,15 @@ namespace API
             services.AddHttpContextAccessor();
 
             services.AddTransient<SaltString>();
-            services.AddScoped<DataFactory>();
+
+            if (Configuration["FE:EnablePushApi"] == "true")
+            {
+                services.AddScoped<IDataFactory, DbDataFactory>();
+            }
+            else
+            {
+                services.AddScoped<IDataFactory, NullDataFactory>();
+            }
 
             services
                 .AddAuthentication("Padlock")

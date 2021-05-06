@@ -4,14 +4,16 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityNameMap("msnfp_refund")]
-    public partial class Refund : ContactPaymentEntity, IIdentifierEntity
+    [EntityNameMap("msnfp_refund"), EntityLogicalName("msnfp_refund")]
+    public partial class Refund : PaymentEntity, IContactPaymentEntity, IIdentifierEntity
     {
         [EntityLogicalName("msnfp_refundId")]
         public Guid RefundId { get; set; }
 
+        [EntityReferenceMap("msnfp_CustomerId")]
+        public Guid? CustomerId { get; set; }
 
-
+        public int? CustomerIdType { get; set; }
 
         [EntityReferenceMap("msnfp_TransactionId")]
         [EntityLogicalName("msnfp_Transaction")]

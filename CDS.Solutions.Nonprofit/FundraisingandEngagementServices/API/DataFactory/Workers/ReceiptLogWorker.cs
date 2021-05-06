@@ -5,20 +5,22 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class ReceiptLogWorker : FactoryFloor<ReceiptLog>
+    public class ReceiptLogWorker : IFactoryFloor<ReceiptLog>
     {
+        private PaymentContext DataContext;
+
         public ReceiptLogWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override ReceiptLog GetById(Guid receiptLogId)
+        public ReceiptLog GetById(Guid receiptLogId)
         {
             return DataContext.ReceiptLog.FirstOrDefault(t => t.ReceiptLogId == receiptLogId);
         }
 
 
-        public override int UpdateCreate(ReceiptLog updateRecord)
+        public int UpdateCreate(ReceiptLog updateRecord)
         {
             if (Exists(updateRecord.ReceiptLogId))
             {
@@ -41,7 +43,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             ReceiptLog existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -58,7 +60,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.ReceiptLog.Any(x => x.ReceiptLogId == guid);
         }

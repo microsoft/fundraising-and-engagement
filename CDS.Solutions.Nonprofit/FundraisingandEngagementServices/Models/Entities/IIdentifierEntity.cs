@@ -1,7 +1,7 @@
 ﻿namespace FundraisingandEngagement.Models.Entities
 {
-	public interface IIdentifierEntity
-	{
-		string Identifier { get; set; }
-	}
+    public interface IIdentifierEntity
+    {
+        string Identifier { get; set; }
+    }
 }

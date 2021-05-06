@@ -6,7 +6,7 @@ using FundraisingandEngagement.Models.Attributes;
 namespace FundraisingandEngagement.Models.Entities
 {
     [EntityLogicalName("msnfp_EventPackage")]
-    public partial class EventPackage : ContactPaymentEntity, IIdentifierEntity
+    public partial class EventPackage : PaymentEntity, IContactPaymentEntity, IIdentifierEntity
     {
         public EventPackage()
         {
@@ -17,8 +17,13 @@ namespace FundraisingandEngagement.Models.Entities
             Ticket = new HashSet<Ticket>();
         }
 
-        [EntityNameMap("msnfp_EventPackageid")]
+        [EntityNameMap("msnfp_EventPackageid", PushToDataverse = true)]
         public Guid EventPackageId { get; set; }
+
+        [EntityReferenceMap("msnfp_CustomerId")]
+        public Guid? CustomerId { get; set; }
+
+        public int? CustomerIdType { get; set; }
 
         [EntityReferenceMap("msnfp_CampaignId")]
         [EntityLogicalName("msnfp_Campaign")]
@@ -52,11 +57,11 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityLogicalName("transactioncurrency")]
         public Guid? TransactionCurrencyId { get; set; }
 
-        [EntityNameMap("msnfp_Amount_Receipted")]
+        [EntityNameMap("msnfp_Amount_Receipted", PushToDataverse = true)]
         [Column(TypeName = "money")]
         public decimal? AmountReceipted { get; set; }
 
-        [EntityNameMap("msnfp_Amount_NonReceiptable")]
+        [EntityNameMap("msnfp_Amount_NonReceiptable", PushToDataverse = true)]
         [Column(TypeName = "money")]
         public decimal? AmountNonReceiptable { get; set; }
 

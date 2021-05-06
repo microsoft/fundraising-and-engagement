@@ -2,14 +2,16 @@
 
 namespace FundraisingandEngagement.Models.Attributes
 {
-	[AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
-	public sealed class EntityReferenceMap : Attribute
-	{
-		public string EntityReference { get; }
+    [AttributeUsage(AttributeTargets.All)]
+    public sealed class EntityReferenceMap : Attribute
+    {
+        public string EntityReference { get; }
 
-		public EntityReferenceMap(string entityReference)
-		{
-			EntityReference = entityReference;
-		}
-	}
+        public bool PushToDataverse { get; set; } // must be false by default
+
+        public EntityReferenceMap(string entityReference)
+        {
+            EntityReference = entityReference;
+        }
+    }
 }

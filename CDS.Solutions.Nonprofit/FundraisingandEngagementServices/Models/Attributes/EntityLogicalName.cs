@@ -2,7 +2,7 @@
 
 namespace FundraisingandEngagement.Models.Attributes
 {
-	[AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
     public sealed class EntityLogicalName : Attribute
     {
         public string LogicalName { get; }

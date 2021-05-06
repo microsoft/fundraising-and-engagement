@@ -5,20 +5,22 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class AccountWorker : FactoryFloor<Account>
+    public class AccountWorker : IFactoryFloor<Account>
     {
+        private PaymentContext DataContext;
+
         public AccountWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override Account GetById(Guid recordID)
+        public Account GetById(Guid recordID)
         {
             return DataContext.Account.FirstOrDefault(c => c.AccountId == recordID);
         }
 
 
-        public override int UpdateCreate(Account updateRecord)
+        public int UpdateCreate(Account updateRecord)
         {
             if (Exists(updateRecord.AccountId))
             {
@@ -39,7 +41,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             Account existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -56,7 +58,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.Account.Any(x => x.AccountId == guid);
         }

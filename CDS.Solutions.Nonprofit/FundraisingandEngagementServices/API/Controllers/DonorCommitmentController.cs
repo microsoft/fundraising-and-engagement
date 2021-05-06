@@ -8,114 +8,98 @@ using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class DonorCommitmentController : ControllerBase
-	{
-		private static DonorCommitmentWorker _donorCommitmentWorker;
+    [Route("api/[controller]")]
+    [ApiController]
+    public class DonorCommitmentController : ControllerBase
+    {
+        private static IFactoryFloor<DonorCommitment> _donorCommitmentWorker;
 
-		public DonorCommitmentController(DataFactory dataFactory)
-		{
-			_donorCommitmentWorker = (DonorCommitmentWorker)dataFactory.GetDataFactory<DonorCommitment>();
-		}
+        public DonorCommitmentController(IDataFactory dataFactory)
+        {
+            _donorCommitmentWorker = dataFactory.GetDataFactory<DonorCommitment>();
+        }
 
-		// GET api/DonorCommitment/5
-		[HttpGet("{id}")]
-		public ActionResult<string> Get(Guid id)
-		{
-			if (id == null)
-			{
-				return "";
-			}
+        // POST api/DonorCommitment/CreateDonorCommitment (Body is JSON)
+        [HttpPost]
+        [Route("CreateDonorCommitment")]
+        public HttpResponseMessage CreateDonorCommitment(DonorCommitment createRecord)
+        {
+            try
+            {
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
 
-			var DesignationRecord = _donorCommitmentWorker.GetById(id);
+                if (createRecord == null)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                }
 
-			string json = JsonConvert.SerializeObject(DesignationRecord);
+                // Create the DonorCommitment record in the Azure SQL DB:
+                int DonorCommitment = _donorCommitmentWorker.UpdateCreate(createRecord);
+                if (DonorCommitment > 0)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                }
+                // Existed already:
+                else if (DonorCommitment == 0)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                }
 
-			return json;
-		}
+                return new HttpResponseMessage(HttpStatusCode.OK);
 
-		// POST api/DonorCommitment/CreateDonorCommitment (Body is JSON)
-		[HttpPost]
-		[Route("CreateDonorCommitment")]
-		public HttpResponseMessage CreateDonorCommitment(DonorCommitment createRecord)
-		{
-			try
-			{
-				ServicePointManager.Expect100Continue = true;
-				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+            }
+            catch (Exception e)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
 
-				if (createRecord == null)
-				{
-					return new HttpResponseMessage(HttpStatusCode.BadRequest);
-				}
+        // POST api/Designation/UpdateDonorCommitment (Body is JSON)
+        [HttpPost]
+        [Route("UpdateDonorCommitment")]
+        public HttpResponseMessage UpdateDonorCommitment(DonorCommitment updateRecord)
+        {
+            try
+            {
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
 
-				// Create the DonorCommitment record in the Azure SQL DB:
-				int DonorCommitment = _donorCommitmentWorker.UpdateCreate(createRecord);
-				if (DonorCommitment > 0)
-				{
-					return new HttpResponseMessage(HttpStatusCode.OK);
-				}
-				// Existed already:
-				else if (DonorCommitment == 0)
-				{
-					return new HttpResponseMessage(HttpStatusCode.OK);
-				}
+                if (updateRecord == null)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                }
 
-				return new HttpResponseMessage(HttpStatusCode.OK);
+                // Update the Designation record in the Azure SQL DB:
+                int DonorCommitment = _donorCommitmentWorker.UpdateCreate(updateRecord);
+                if (DonorCommitment > 0)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                }
+                // Existed already:
+                else if (DonorCommitment == 0)
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                }
 
-			}
-			catch (Exception e)
-			{
-				return new HttpResponseMessage(HttpStatusCode.BadRequest);
-			}
-		}
+                return new HttpResponseMessage(HttpStatusCode.OK);
 
-		// POST api/Designation/UpdateDonorCommitment (Body is JSON)
-		[HttpPost]
-		[Route("UpdateDonorCommitment")]
-		public HttpResponseMessage UpdateDonorCommitment(DonorCommitment updateRecord)
-		{
-			try
-			{
-				ServicePointManager.Expect100Continue = true;
-				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
-
-				if (updateRecord == null)
-				{
-					return new HttpResponseMessage(HttpStatusCode.BadRequest);
-				}
-
-				// Update the Designation record in the Azure SQL DB:
-				int DonorCommitment = _donorCommitmentWorker.UpdateCreate(updateRecord);
-				if (DonorCommitment > 0)
-				{
-					return new HttpResponseMessage(HttpStatusCode.OK);
-				}
-				// Existed already:
-				else if (DonorCommitment == 0)
-				{
-					return new HttpResponseMessage(HttpStatusCode.OK);
-				}
-
-				return new HttpResponseMessage(HttpStatusCode.OK);
-
-			}
-			catch (Exception e)
-			{
-				return new HttpResponseMessage(HttpStatusCode.BadRequest);
-			}
-		}
+            }
+            catch (Exception e)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
 
 
-		// DELETE api/Designation/5
-		[HttpDelete("{id}")]
-		public void Delete(Guid id)
-		{
-			if (id != null)
-			{
-				_donorCommitmentWorker.Delete(id);
-			}
-		}
-	}
+        // DELETE api/Designation/5
+        [HttpDelete("{id}")]
+        public void Delete(Guid id)
+        {
+            if (id != null)
+            {
+                _donorCommitmentWorker.Delete(id);
+            }
+        }
+    }
 }

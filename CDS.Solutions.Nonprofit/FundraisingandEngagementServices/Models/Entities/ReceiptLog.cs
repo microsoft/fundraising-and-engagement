@@ -3,7 +3,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_receiptlog")]
+    [EntityLogicalName("msnfp_receiptlog")]
     public partial class ReceiptLog : PaymentEntity, IIdentifierEntity
     {
         [EntityNameMap("msnfp_receiptlogid")]
@@ -22,8 +22,8 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_ReceiptNumber")]
         public string ReceiptNumber { get; set; }
 
-		[EntityNameMap("msnfp_Identifier")]
-		public string Identifier { get; set; }
+        [EntityNameMap("msnfp_Identifier")]
+        public string Identifier { get; set; }
 
         public virtual ReceiptStack ReceiptStack { get; set; }
     }

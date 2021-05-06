@@ -5,20 +5,22 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class EventSponsorWorker : FactoryFloor<EventSponsor>
+    public class EventSponsorWorker : IFactoryFloor<EventSponsor>
     {
+        private PaymentContext DataContext;
+
         public EventSponsorWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override EventSponsor GetById(Guid eventSponsorId)
+        public EventSponsor GetById(Guid eventSponsorId)
         {
             return DataContext.EventSponsor.FirstOrDefault(t => t.EventSponsorId == eventSponsorId);
         }
 
-      
-        public override int UpdateCreate(EventSponsor eventSponsor)
+
+        public int UpdateCreate(EventSponsor eventSponsor)
         {
             if (Exists(eventSponsor.EventSponsorId))
             {
@@ -38,7 +40,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             EventSponsor existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -55,7 +57,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.EventSponsor.Any(x => x.EventSponsorId == guid);
         }

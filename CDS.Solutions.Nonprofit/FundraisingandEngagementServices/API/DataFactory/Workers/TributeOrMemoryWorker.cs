@@ -5,20 +5,22 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class TributeOrMemoryWorker : FactoryFloor<TributeOrMemory>
+    public class TributeOrMemoryWorker : IFactoryFloor<TributeOrMemory>
     {
+        private PaymentContext DataContext;
+
         public TributeOrMemoryWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override TributeOrMemory GetById(Guid tributeOrMemoryId)
+        public TributeOrMemory GetById(Guid tributeOrMemoryId)
         {
             return DataContext.TributeOrMemory.FirstOrDefault(t => t.TributeOrMemoryId == tributeOrMemoryId);
         }
 
 
-        public override int UpdateCreate(TributeOrMemory updateRecord)
+        public int UpdateCreate(TributeOrMemory updateRecord)
         {
             if (Exists(updateRecord.TributeOrMemoryId))
             {
@@ -40,7 +42,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             TributeOrMemory existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -57,7 +59,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.TributeOrMemory.Any(x => x.TributeOrMemoryId == guid);
         }

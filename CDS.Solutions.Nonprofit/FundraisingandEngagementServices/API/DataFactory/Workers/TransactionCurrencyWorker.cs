@@ -5,20 +5,22 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class TransactionCurrencyWorker : FactoryFloor<TransactionCurrency>
+    public class TransactionCurrencyWorker : IFactoryFloor<TransactionCurrency>
     {
+        private PaymentContext DataContext;
+
         public TransactionCurrencyWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override TransactionCurrency GetById(Guid recordID)
+        public TransactionCurrency GetById(Guid recordID)
         {
             return DataContext.TransactionCurrency.FirstOrDefault(c => c.TransactionCurrencyId == recordID);
         }
 
 
-        public override int UpdateCreate(TransactionCurrency updateRecord)
+        public int UpdateCreate(TransactionCurrency updateRecord)
         {
             if (Exists(updateRecord.TransactionCurrencyId))
             {
@@ -39,7 +41,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             TransactionCurrency existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -56,7 +58,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.TransactionCurrency.Any(x => x.TransactionCurrencyId == guid);
         }

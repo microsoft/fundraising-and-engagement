@@ -1,39 +1,23 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
 using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class EventPreferenceController : ControllerBase
     {
-        private static EventPreferenceWorker _eventPreferenceWorker;
+        private static IFactoryFloor<EventPreference> _eventPreferenceWorker;
 
-        public EventPreferenceController(DataFactory dataFactory)
+        public EventPreferenceController(IDataFactory dataFactory)
         {
-            _eventPreferenceWorker = (EventPreferenceWorker)dataFactory.GetDataFactory<EventPreference>();
-        }
-
-        // GET api/Event Preference/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var eventPreferenceRecord = _eventPreferenceWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(eventPreferenceRecord);
-
-            return json;
+            _eventPreferenceWorker = dataFactory.GetDataFactory<EventPreference>();
         }
 
         // POST api/Event Preference/CreateEventPreference (Body is JSON)

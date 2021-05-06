@@ -4,7 +4,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_eventsponsor")]
+    [EntityLogicalName("msnfp_eventsponsor")]
     public partial class EventSponsor : PaymentEntity, IIdentifierEntity
     {
         public EventSponsor()
@@ -24,7 +24,7 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityLogicalName("transactioncurrency")]
         public Guid? TransactionCurrencyId { get; set; }
 
-		[EntityNameMap("msnfp_largeimage")]
+        [EntityNameMap("msnfp_largeimage")]
         public string LargeImage { get; set; }
 
         [EntityOptionSetMap("msnfp_order")]

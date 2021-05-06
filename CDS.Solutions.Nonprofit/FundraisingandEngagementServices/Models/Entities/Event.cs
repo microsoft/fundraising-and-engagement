@@ -5,7 +5,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_Event")]
+    [EntityLogicalName("msnfp_Event")]
     public partial class Event : PaymentEntity, IIdentifierEntity
     {
         public Event()
@@ -60,10 +60,6 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityReferenceMap("msnfp_TeamOwnerId")]
         [EntityLogicalName("msnfp_TeamOwner")]
         public Guid? TeamOwnerId { get; set; }
-
-        [EntityReferenceMap("msnfp_TermsOfReferenceId")]
-        [EntityLogicalName("msnfp_TermsOfReferenceId")]
-        public Guid? TermsOfReferenceId { get; set; }
 
         [EntityReferenceMap("TransactionCurrencyId")]
         [EntityLogicalName("TransactionCurrency")]
@@ -230,7 +226,6 @@ namespace FundraisingandEngagement.Models.Entities
         public virtual TransactionCurrency TransactionCurrency { get; set; }
         public virtual PaymentProcessor PaymentProcessor { get; set; }
         public virtual Configuration Configuration { get; set; }
-        public virtual TermsOfReference TermsOfReference { get; set; }
         public virtual ICollection<EventDisclaimer> EventDislaimer { get; set; }
         public virtual ICollection<EventDonation> EventDonation { get; set; }
         public virtual ICollection<EventPackage> EventPackage { get; set; }

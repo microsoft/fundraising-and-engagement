@@ -1,40 +1,23 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
 using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ConfigurationController : ControllerBase
     {
-        private static ConfigurationWorker _configurationWorker;
+        private static IFactoryFloor<Configuration> _configurationWorker;
 
-        public ConfigurationController(DataFactory dataFactory)
+        public ConfigurationController(IDataFactory dataFactory)
         {
-            _configurationWorker = (ConfigurationWorker)dataFactory.GetDataFactory<Configuration>();
-        }
-
-
-        // GET api/configuration/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var retrievedRecord = _configurationWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(retrievedRecord);
-
-            return json;
+            _configurationWorker = dataFactory.GetDataFactory<Configuration>();
         }
 
 

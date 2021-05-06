@@ -1,15 +1,15 @@
-﻿using FundraisingandEngagement.Models.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_EventSponsorship")]
+    [EntityLogicalName("msnfp_EventSponsorship")]
     public partial class EventSponsorship : PaymentEntity, IIdentifierEntity
     {
 
-        [EntityNameMap("msnfp_eventsponsorshipId")]
+        [EntityNameMap("msnfp_eventsponsorshipId", PushToDataverse = true)]
         public Guid EventSponsorshipId { get; set; }
 
 
@@ -21,7 +21,7 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityLogicalName("transactioncurrency")]
         public Guid? TransactionCurrencyId { get; set; }
 
-		[EntityNameMap("msnfp_advantage")]
+        [EntityNameMap("msnfp_advantage")]
         [Column(TypeName = "money")]
         public decimal? Advantage { get; set; }
 
@@ -29,13 +29,13 @@ namespace FundraisingandEngagement.Models.Entities
         [Column(TypeName = "money")]
         public decimal? Amount { get; set; }
 
-		[EntityNameMap("msnfp_amount_nonreceiptable")]
-		[Column(TypeName = "money")]
-		public decimal? AmountNonReceiptable { get; set; }
+        [EntityNameMap("msnfp_amount_nonreceiptable")]
+        [Column(TypeName = "money")]
+        public decimal? AmountNonReceiptable { get; set; }
 
-		[EntityNameMap("msnfp_amount_receipted")]
-		[Column(TypeName = "money")]
-		public decimal? AmountReceipted { get; set; }
+        [EntityNameMap("msnfp_amount_receipted")]
+        [Column(TypeName = "money")]
+        public decimal? AmountReceipted { get; set; }
 
         [EntityNameMap("msnfp_date")]
         public DateTime? Date { get; set; }
@@ -43,7 +43,7 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_description")]
         public string Description { get; set; }
 
-		// check
+        // check
         [EntityNameMap("msnfp_Name")]
         public string Name { get; set; }
 
@@ -57,7 +57,7 @@ namespace FundraisingandEngagement.Models.Entities
         [Column(TypeName = "money")]
         public decimal? FromAmount { get; set; }
 
-		// check
+        // check
         [EntityNameMap("msnfp_Val_Available")]
         public int? ValAvailable { get; set; }
 
@@ -76,5 +76,5 @@ namespace FundraisingandEngagement.Models.Entities
 
         public virtual ICollection<Sponsorship> Sponsorship { get; set; }
 
-	}
+    }
 }

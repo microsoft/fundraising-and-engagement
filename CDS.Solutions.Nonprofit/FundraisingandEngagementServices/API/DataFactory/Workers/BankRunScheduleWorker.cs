@@ -5,87 +5,89 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class BankRunScheduleWorker : FactoryFloor<BankRunSchedule>
-	{
-		public BankRunScheduleWorker(PaymentContext context)
-		{
-			DataContext = context;
-		}
+    public class BankRunScheduleWorker : IFactoryFloor<BankRunSchedule>
+    {
+        private PaymentContext DataContext;
 
-		public override BankRunSchedule GetById(Guid BankRunScheduleId)
-		{
-			return DataContext.BankRunSchedule.FirstOrDefault(t => t.BankRunScheduleId == BankRunScheduleId);
-		}
+        public BankRunScheduleWorker(PaymentContext context)
+        {
+            DataContext = context;
+        }
 
-		public string UpdateCreateReturnGuid(BankRunSchedule updateRecord)
-		{
-			if (Exists(updateRecord.BankRunScheduleId))
-			{
-				updateRecord.SyncDate = DateTime.Now;
+        public BankRunSchedule GetById(Guid BankRunScheduleId)
+        {
+            return DataContext.BankRunSchedule.FirstOrDefault(t => t.BankRunScheduleId == BankRunScheduleId);
+        }
 
-				DataContext.BankRunSchedule.Update(updateRecord);
-				DataContext.SaveChanges();
+        public string UpdateCreateReturnGuid(BankRunSchedule updateRecord)
+        {
+            if (Exists(updateRecord.BankRunScheduleId))
+            {
+                updateRecord.SyncDate = DateTime.Now;
 
-				return updateRecord.BankRunScheduleId.ToString();
-			}
-			else if (updateRecord != null)
-			{
+                DataContext.BankRunSchedule.Update(updateRecord);
+                DataContext.SaveChanges();
 
-				DataContext.BankRunSchedule.Add(updateRecord);
+                return updateRecord.BankRunScheduleId.ToString();
+            }
+            else if (updateRecord != null)
+            {
 
-				DataContext.SaveChanges();
+                DataContext.BankRunSchedule.Add(updateRecord);
 
-				return updateRecord.BankRunScheduleId.ToString();
-			}
-			else
-			{
-				return "Error";
-			}
-		}
+                DataContext.SaveChanges();
 
-		public override int UpdateCreate(BankRunSchedule updateRecord)
-		{
-			if (Exists(updateRecord.BankRunScheduleId))
-			{
-				updateRecord.SyncDate = DateTime.Now;
+                return updateRecord.BankRunScheduleId.ToString();
+            }
+            else
+            {
+                return "Error";
+            }
+        }
 
-				DataContext.BankRunSchedule.Update(updateRecord);
-				return DataContext.SaveChanges();
-			}
-			else if (updateRecord != null)
-			{
-				updateRecord.CreatedOn = DateTime.Now;
-				DataContext.BankRunSchedule.Add(updateRecord);
+        public int UpdateCreate(BankRunSchedule updateRecord)
+        {
+            if (Exists(updateRecord.BankRunScheduleId))
+            {
+                updateRecord.SyncDate = DateTime.Now;
 
-				return DataContext.SaveChanges();
-			}
-			else
-			{
-				return 0;
-			}
-		}
+                DataContext.BankRunSchedule.Update(updateRecord);
+                return DataContext.SaveChanges();
+            }
+            else if (updateRecord != null)
+            {
+                updateRecord.CreatedOn = DateTime.Now;
+                DataContext.BankRunSchedule.Add(updateRecord);
 
-		public override int Delete(Guid guid)
-		{
-			BankRunSchedule existingRecord = GetById(guid);
-			if (existingRecord != null)
-			{
-				existingRecord.Deleted = true;
-				existingRecord.DeletedDate = DateTime.Now;
+                return DataContext.SaveChanges();
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
-				DataContext.Update(existingRecord);
-				return DataContext.SaveChanges();
-			}
-			else
-			{
-				return 0;
-			}
-		}
+        public int Delete(Guid guid)
+        {
+            BankRunSchedule existingRecord = GetById(guid);
+            if (existingRecord != null)
+            {
+                existingRecord.Deleted = true;
+                existingRecord.DeletedDate = DateTime.Now;
 
-		public override bool Exists(Guid guid)
-		{
-			return DataContext.BankRunSchedule.Any(x => x.BankRunScheduleId == guid);
-		}
+                DataContext.Update(existingRecord);
+                return DataContext.SaveChanges();
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
-	}
+        public bool Exists(Guid guid)
+        {
+            return DataContext.BankRunSchedule.Any(x => x.BankRunScheduleId == guid);
+        }
+
+    }
 }

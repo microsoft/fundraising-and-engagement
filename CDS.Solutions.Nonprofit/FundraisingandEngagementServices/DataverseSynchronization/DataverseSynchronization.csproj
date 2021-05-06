@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>FundraisingandEngagement.DataverseSynchronization</AssemblyName>
+    <RootNamespace>FundraisingandEngagement.DataverseSynchronization</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.13" />
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="0.4.12" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+     <None Include="..\..\.editorconfig" />
+  </ItemGroup>
+</Project>

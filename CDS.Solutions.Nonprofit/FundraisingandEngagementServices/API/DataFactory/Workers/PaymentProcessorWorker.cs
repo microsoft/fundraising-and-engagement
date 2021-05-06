@@ -5,20 +5,22 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class PaymentProcessorWorker : FactoryFloor<PaymentProcessor>
+    public class PaymentProcessorWorker : IFactoryFloor<PaymentProcessor>
     {
+        private PaymentContext DataContext;
+
         public PaymentProcessorWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override PaymentProcessor GetById(Guid recordID)
+        public PaymentProcessor GetById(Guid recordID)
         {
             return DataContext.PaymentProcessor.FirstOrDefault(c => c.PaymentProcessorId == recordID);
         }
 
 
-        public override int UpdateCreate(PaymentProcessor updateRecord)
+        public int UpdateCreate(PaymentProcessor updateRecord)
         {
             if (Exists(updateRecord.PaymentProcessorId))
             {
@@ -40,7 +42,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             PaymentProcessor existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -57,7 +59,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.PaymentProcessor.Any(x => x.PaymentProcessorId == guid);
         }

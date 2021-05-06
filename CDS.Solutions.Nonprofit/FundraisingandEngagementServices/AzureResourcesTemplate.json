@@ -20,7 +20,7 @@
 		},
 		"apiPadlockToken": {
 			"type": "securestring",
-			"minLength": 8,
+			"defaultValue": "",
 			"metadata": {
 				"description": "Hashed version of API padlock token"
 			}
@@ -46,19 +46,19 @@
 				"description": "Database password (will be used by application to connect to the database). Must contains upper and lower letters, with numbers and symbols"
 			}
 		},
-		"CrmApplicationID": {
+		"AppRegistrationClientId": {
 			"type": "string",
 			"minLength": 25,
 			"maxLength": 50,
 			"metadata": {
-				"description": "This information should be obtain from your Azure Portal. Eg: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+				"description": "Application (client) ID associated with the Fundraising and Engagement App registration. Eg: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 			}
 		},
-		"CrmApplicationKey": {
+		"AppRegistrationClientSecret": {
 			"type": "securestring",
 			"minLength": 10,
 			"metadata": {
-				"description": "This information should be obtain from your Azure Portal"
+				"description": "Client secret associated with the Fundraising and Engagement App registration"
 			}
 		},
 		"CrmOrganizationURL": {
@@ -264,11 +264,7 @@
 						},
 						{
 							"name": "Crm:CrmApplicationID",
-							"value": "[parameters('CrmApplicationID')]"
-						},
-						{
-							"name": "Crm:CrmApplicationKey",
-							"value": "[parameters('CrmApplicationKey')]"
+							"value": "[parameters('AppRegistrationClientId')]"
 						},
 						{
 							"name": "Crm:CrmOrganizationURL",
@@ -339,11 +335,7 @@
 						},
 						{
 							"name": "Crm:CrmApplicationID",
-							"value": "[parameters('CrmApplicationID')]"
-						},
-						{
-							"name": "Crm:CrmApplicationKey",
-							"value": "[parameters('CrmApplicationKey')]"
+							"value": "[parameters('AppRegistrationClientId')]"
 						},
 						{
 							"name": "Crm:CrmOrganizationURL",
@@ -423,6 +415,18 @@
 						{
 							"name": "ApplicationInsights:InstrumentationKey",
 							"value": "[reference(resourceId('Microsoft.Insights/components', concat(variables('recurringDonationAppName'), '-AI')), '2014-04-01').InstrumentationKey]"
+						},
+						{
+							"name": "Crm:CrmApplicationID",
+							"value": "[parameters('AppRegistrationClientId')]"
+						},
+						{
+							"name": "Crm:CrmOrganizationURL",
+							"value": "[parameters('CrmOrganizationURL')]"
+						},
+						{
+							"name": "Crm:CrmTenantId",
+							"value": "[parameters('CrmTenantId')]"
 						}
 					],
 					"connectionStrings": [
@@ -576,6 +580,30 @@
 			],
 			"properties": {
 				"value": "[parameters('databasePassword')]"
+			}
+		},
+		{
+			"type": "Microsoft.KeyVault/vaults/secrets",
+			"name": "[concat(variables('vaultName'), '/ConnectionSecrets--DataverseConnectionString')]",
+			"apiVersion": "2016-10-01",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+			],
+			"properties": {
+				"value": "[concat('AuthType=ClientSecret; Url=', parameters('CrmOrganizationURL'), '; ClientId=', parameters('AppRegistrationClientId'), '; ClientSecret=', parameters('AppRegistrationClientSecret'), ';RequireNewInstance=true')]"
+			}
+		},
+		{
+			"type": "Microsoft.KeyVault/vaults/secrets",
+			"name": "[concat(variables('vaultName'), '/ConnectionSecrets--DataverseClientSecret')]",
+			"apiVersion": "2016-10-01",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+			],
+			"properties": {
+				"value": "[parameters('AppRegistrationClientSecret')]"
 			}
 		},
 		{

@@ -5,21 +5,23 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class PreferenceCategoryWorker : FactoryFloor<PreferenceCategory>
+    public class PreferenceCategoryWorker : IFactoryFloor<PreferenceCategory>
     {
+        private PaymentContext DataContext;
+
         public PreferenceCategoryWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override PreferenceCategory GetById(Guid preferenceCategoryId)
+        public PreferenceCategory GetById(Guid preferenceCategoryId)
         {
             return DataContext.PreferenceCategory.FirstOrDefault(t => t.preferencecategoryid == preferenceCategoryId);
         }
 
 
 
-        public override int UpdateCreate(PreferenceCategory preferenceCategoryRecord)
+        public int UpdateCreate(PreferenceCategory preferenceCategoryRecord)
         {
 
             if (Exists(preferenceCategoryRecord.preferencecategoryid))
@@ -41,7 +43,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             PreferenceCategory existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -58,7 +60,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.PreferenceCategory.Any(x => x.preferencecategoryid == guid);
         }

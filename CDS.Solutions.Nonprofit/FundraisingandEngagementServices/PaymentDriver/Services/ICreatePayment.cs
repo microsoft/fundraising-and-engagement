@@ -2,8 +2,8 @@
 
 namespace PaymentDriver.Services
 {
-	internal interface ICreatePayment
-	{
-		Task Run();
-	}
+    internal interface ICreatePayment
+    {
+        Task Run();
+    }
 }

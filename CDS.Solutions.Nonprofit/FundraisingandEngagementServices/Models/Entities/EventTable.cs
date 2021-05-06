@@ -3,10 +3,10 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_EventTable")]
+    [EntityLogicalName("msnfp_EventTable")]
     public partial class EventTable : PaymentEntity, IIdentifierEntity
-    {  
-       public Guid EventTableId { get; set; }
+    {
+        public Guid EventTableId { get; set; }
 
         public string Identifier { get; set; }
 

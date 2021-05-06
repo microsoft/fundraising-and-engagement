@@ -12,56 +12,56 @@ using PaymentProcessors;
 
 namespace PaymentDriver
 {
-	internal class Program
-	{
-		public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
+    internal class Program
+    {
+        public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
-		private static IHostBuilder CreateHostBuilder(string[] args)
-		{
-			return Host
-				.CreateDefaultBuilder(args)
-				.ConfigureAppConfiguration((hostContext, configApp) =>
-				{
-					var builtConfig = configApp.Build();
+        private static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host
+                .CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostContext, configApp) =>
+                {
+                    var builtConfig = configApp.Build();
 
-					if (!String.IsNullOrEmpty(builtConfig["KeyVaultName"]))
-						configApp.AddAzureKeyVault($"https://{builtConfig["KeyVaultName"]}.vault.azure.net/");
-				})
-				.ConfigureLogging((hostingContext, logging) =>
-				{
-					var instrumentationKey = hostingContext.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
-					if (!String.IsNullOrEmpty(instrumentationKey))
-						logging.AddApplicationInsights(instrumentationKey);
-				})
-				.ConfigureServices((context, services) =>
-				{
-					services.Configure<TestDataOption>(context.Configuration.GetSection("TestData"));
+                    if (!String.IsNullOrEmpty(builtConfig["KeyVaultName"]))
+                        configApp.AddAzureKeyVault($"https://{builtConfig["KeyVaultName"]}.vault.azure.net/");
+                })
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    var instrumentationKey = hostingContext.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
+                    if (!String.IsNullOrEmpty(instrumentationKey))
+                        logging.AddApplicationInsights(instrumentationKey);
+                })
+                .ConfigureServices((context, services) =>
+                {
+                    services.Configure<TestDataOption>(context.Configuration.GetSection("TestData"));
 
-					var connectionStringBuilder = new SqlConnectionStringBuilder(context.Configuration.GetConnectionString("PaymentContext"));
+                    var connectionStringBuilder = new SqlConnectionStringBuilder(context.Configuration.GetConnectionString("PaymentContext"));
 
-					if (!String.IsNullOrEmpty(context.Configuration["ConnectionSecrets:PaymentContextUserID"]))
-					{
-						connectionStringBuilder.UserID = context.Configuration["ConnectionSecrets:PaymentContextUserID"];
-						connectionStringBuilder.Password = context.Configuration["ConnectionSecrets:PaymentContextPassword"];
-					}
+                    if (!String.IsNullOrEmpty(context.Configuration["ConnectionSecrets:PaymentContextUserID"]))
+                    {
+                        connectionStringBuilder.UserID = context.Configuration["ConnectionSecrets:PaymentContextUserID"];
+                        connectionStringBuilder.Password = context.Configuration["ConnectionSecrets:PaymentContextPassword"];
+                    }
 
-					services.AddDbContext<PaymentContext>(options => options.UseSqlServer(connectionStringBuilder.ConnectionString), ServiceLifetime.Singleton);
+                    services.AddDbContext<PaymentContext>(options => options.UseSqlServer(connectionStringBuilder.ConnectionString), ServiceLifetime.Singleton);
 
-					if (Boolean.Parse(context.Configuration["TestData:UseMock"]))
-					{
-						services.AddSingleton<IPaymentProcessorGateway, MockProcessPayment>();
-					}
-					else
-					{
-						services.AddPaymentProcessors();
-					}
+                    if (Boolean.Parse(context.Configuration["TestData:UseMock"]))
+                    {
+                        services.AddSingleton<IPaymentProcessorGateway, MockProcessPayment>();
+                    }
+                    else
+                    {
+                        services.AddPaymentProcessors();
+                    }
 
-					services.AddHostedService<ExecuteService>();
+                    services.AddHostedService<ExecuteService>();
 
-					services.AddSingleton<IPaymentContext>(p => p.GetRequiredService<PaymentContext>());
-					services.AddSingleton<ICreatePayment, CreatePayments>();
-				})
-				.UseConsoleLifetime();
-		}
-	}
+                    services.AddSingleton<IPaymentContext>(p => p.GetRequiredService<PaymentContext>());
+                    services.AddSingleton<ICreatePayment, CreatePayments>();
+                })
+                .UseConsoleLifetime();
+        }
+    }
 }

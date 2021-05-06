@@ -4,24 +4,24 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_BankRun")]
+    [EntityLogicalName("msnfp_BankRun")]
     public partial class BankRun : PaymentEntity, IIdentifierEntity
     {
-		[EntityNameMap("msnfp_bankrunid")]
+        [EntityNameMap("msnfp_bankrunid", PushToDataverse = true)]
         public Guid BankRunId { get; set; }
 
-		[EntityLogicalName("msnfp_PaymentProcessor")]
-		[EntityReferenceMap("msnfp_PaymentProcessorId")]
-		public Guid? PaymentProcessorId { get; set; }
+        [EntityLogicalName("msnfp_PaymentProcessor")]
+        [EntityReferenceMap("msnfp_PaymentProcessorId")]
+        public Guid? PaymentProcessorId { get; set; }
 
-		[EntityLogicalName("msnfp_PaymentMethod")]
-		[EntityReferenceMap("msnfp_AccountToCreditId")]
-		public Guid? AccountToCreditId { get; set; }
+        [EntityLogicalName("msnfp_PaymentMethod")]
+        [EntityReferenceMap("msnfp_AccountToCreditId")]
+        public Guid? AccountToCreditId { get; set; }
 
-		[EntityOptionSetMap("msnfp_bankrunstatus")]
+        [EntityOptionSetMap("msnfp_bankrunstatus", PushToDataverse = true)]
         public int? BankRunStatus { get; set; }
 
-		[EntityNameMap("msnfp_startdate", Format = "yyyy-MM-dd")]
+        [EntityNameMap("msnfp_startdate", Format = "yyyy-MM-dd")]
         public DateTime? StartDate { get; set; }
 
         [EntityNameMap("msnfp_enddate", Format = "yyyy-MM-dd")]
@@ -33,9 +33,9 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_Identifier")]
         public string Identifier { get; set; }
 
-		[EntityNameMap("msnfp_filecreationnumber")]
-		public int? FileCreationNumber { get; set; }
+        [EntityNameMap("msnfp_filecreationnumber")]
+        public int? FileCreationNumber { get; set; }
 
-		public virtual ICollection<Note> Note { get; set; }
-	}
+        public virtual ICollection<Note> Note { get; set; }
+    }
 }

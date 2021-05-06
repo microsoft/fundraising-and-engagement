@@ -5,20 +5,22 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class EventDisclaimerWorker: FactoryFloor<EventDisclaimer>
+    public class EventDisclaimerWorker : IFactoryFloor<EventDisclaimer>
     {
+        private PaymentContext DataContext;
+
         public EventDisclaimerWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override EventDisclaimer GetById(Guid eventDisclaimerId)
+        public EventDisclaimer GetById(Guid eventDisclaimerId)
         {
             return DataContext.EventDisclaimer.FirstOrDefault(t => t.EventDisclaimerId == eventDisclaimerId);
         }
 
 
-        public override int UpdateCreate(EventDisclaimer eventDisclaimer)
+        public int UpdateCreate(EventDisclaimer eventDisclaimer)
         {
 
             if (Exists(eventDisclaimer.EventDisclaimerId))
@@ -39,7 +41,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             EventDisclaimer existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -56,7 +58,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.EventDisclaimer.Any(x => x.EventDisclaimerId == guid);
         }

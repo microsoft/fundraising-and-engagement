@@ -1,43 +1,24 @@
 ﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using FundraisingandEngagement.Models.Entities;
 using System.Net;
 using System.Net.Http;
-using Newtonsoft.Json;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class MembershipOrderController : ControllerBase
     {
-        private static MembershipOrderWorker _membershipOrderWorker;
+        private static IFactoryFloor<MembershipOrder> _membershipOrderWorker;
 
-        public MembershipOrderController(DataFactory dataFactory)
+        public MembershipOrderController(IDataFactory dataFactory)
         {
-            _membershipOrderWorker = (MembershipOrderWorker)dataFactory.GetDataFactory<MembershipOrder>();
+            _membershipOrderWorker = dataFactory.GetDataFactory<MembershipOrder>();
         }
-
-
-        // GET api/MembershipOrder/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var retrievedRecord = _membershipOrderWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(retrievedRecord);
-
-            return json;
-        }
-
-
 
         // POST api/MembershipOrder/CreateMembershipOrder (Body is JSON)
         [HttpPost]

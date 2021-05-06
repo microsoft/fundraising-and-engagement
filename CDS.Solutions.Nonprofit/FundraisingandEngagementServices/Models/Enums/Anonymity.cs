@@ -4,9 +4,9 @@ using System.Text;
 
 namespace FundraisingandEngagement.Models.Enums
 {
-	public enum Anonymity
-	{
-		No = 844060000,
-		Yes = 844060001
-	}
+    public enum Anonymity
+    {
+        No = 844060000,
+        Yes = 844060001
+    }
 }

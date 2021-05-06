@@ -1,43 +1,24 @@
 ﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using FundraisingandEngagement.Models.Entities;
 using System.Net;
 using System.Net.Http;
-using Newtonsoft.Json;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class TransactionCurrencyController : ControllerBase
     {
-        private static TransactionCurrencyWorker _transactionCurrencyWorker;
+        private static IFactoryFloor<TransactionCurrency> _transactionCurrencyWorker;
 
-        public TransactionCurrencyController(DataFactory dataFactory)
+        public TransactionCurrencyController(IDataFactory dataFactory)
         {
-            _transactionCurrencyWorker = (TransactionCurrencyWorker)dataFactory.GetDataFactory<TransactionCurrency>();
+            _transactionCurrencyWorker = dataFactory.GetDataFactory<TransactionCurrency>();
         }
-
-
-        // GET api/TransactionCurrency/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var retrievedRecord = _transactionCurrencyWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(retrievedRecord);
-
-            return json;
-        }
-
-
 
         // POST api/TransactionCurrency/CreateTransactionCurrency (Body is JSON)
         [HttpPost]

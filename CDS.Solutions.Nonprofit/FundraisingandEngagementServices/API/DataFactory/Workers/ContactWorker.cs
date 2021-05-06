@@ -5,20 +5,22 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-    public class ContactWorker : FactoryFloor<Contact>
+    public class ContactWorker : IFactoryFloor<Contact>
     {
+        private PaymentContext DataContext;
+
         public ContactWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override Contact GetById(Guid recordID)
+        public Contact GetById(Guid recordID)
         {
             return DataContext.Contact.FirstOrDefault(c => c.ContactId == recordID);
         }
 
 
-        public override int UpdateCreate(Contact updateRecord)
+        public int UpdateCreate(Contact updateRecord)
         {
             if (Exists(updateRecord.ContactId))
             {
@@ -40,7 +42,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
         }
 
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             Contact existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -57,7 +59,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.Contact.Any(x => x.ContactId == guid);
         }

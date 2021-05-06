@@ -1,10 +1,10 @@
-﻿using FundraisingandEngagement.Models.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_Configuration")]
+    [EntityLogicalName("msnfp_Configuration")]
     public partial class Configuration : PaymentEntity, IIdentifierEntity
     {
         public Configuration()
@@ -29,8 +29,6 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityLogicalName("msnfp_PaymentProcessor")]
         [EntityReferenceMap("msnfp_PaymentProcessorId")]
         public Guid? PaymentProcessorId { get; set; }
-
-		public bool ShouldSyncResponse { get; set; }
 
         [EntityNameMap("msnfp_AddressAuth1")]
         public string AddressAuth1 { get; set; }

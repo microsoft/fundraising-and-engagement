@@ -1,6 +1,6 @@
-﻿using FundraisingandEngagement.Models.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
@@ -28,12 +28,12 @@ namespace FundraisingandEngagement.Models.Entities
 
         public virtual MembershipCategory MembershipCategory { get; set; }
 
-		public virtual ICollection<Transaction> Transactions { get; set; }
-        
+        public virtual ICollection<Transaction> Transactions { get; set; }
+
         public virtual ICollection<Account> Account { get; set; }
 
         public virtual ICollection<Contact> Contact { get; set; }
 
-		public virtual ICollection<PaymentSchedule> PaymentSchedules { get; set; }
-	}
+        public virtual ICollection<PaymentSchedule> PaymentSchedules { get; set; }
+    }
 }

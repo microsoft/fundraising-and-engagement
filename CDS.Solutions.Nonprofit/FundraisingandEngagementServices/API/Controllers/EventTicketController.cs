@@ -1,39 +1,23 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
 using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class EventTicketController : ControllerBase
     {
-        private static EventTicketWorker _eventTicketWorker;
+        private static IFactoryFloor<EventTicket> _eventTicketWorker;
 
-        public EventTicketController(DataFactory dataFactory)
+        public EventTicketController(IDataFactory dataFactory)
         {
-            _eventTicketWorker = (EventTicketWorker)dataFactory.GetDataFactory<EventTicket>();
-        }
-
-        // GET api/EventTicket/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var eventTicketRecord = _eventTicketWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(eventTicketRecord);
-
-            return json;
+            _eventTicketWorker = dataFactory.GetDataFactory<EventTicket>();
         }
 
         // POST api/EventTicket/CreateEventTicket (Body is JSON)

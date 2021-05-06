@@ -1,43 +1,24 @@
 ﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using FundraisingandEngagement.Models.Entities;
 using System.Net;
 using System.Net.Http;
-using Newtonsoft.Json;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ReceiptStackController : ControllerBase
     {
-        private static ReceiptStackWorker _receiptStackWorker;
+        private static IFactoryFloor<ReceiptStack> _receiptStackWorker;
 
-        public ReceiptStackController(DataFactory dataFactory)
+        public ReceiptStackController(IDataFactory dataFactory)
         {
-            _receiptStackWorker = (ReceiptStackWorker)dataFactory.GetDataFactory<ReceiptStack>();
+            _receiptStackWorker = dataFactory.GetDataFactory<ReceiptStack>();
         }
-
-
-        // GET api/ReceiptStack/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var retrievedRecord = _receiptStackWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(retrievedRecord);
-
-            return json;
-        }
-
-
 
         // POST api/ReceiptStack/CreateReceiptStack (Body is JSON)
         [HttpPost]

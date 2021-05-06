@@ -4,11 +4,16 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_Sponsorship")]
-    public partial class Sponsorship : ContactPaymentEntity, IIdentifierEntity
+    [EntityLogicalName("msnfp_Sponsorship")]
+    public partial class Sponsorship : PaymentEntity, IContactPaymentEntity, IIdentifierEntity
     {
-        [EntityNameMap("msnfp_Sponsorshipid")]
+        [EntityNameMap("msnfp_Sponsorshipid", PushToDataverse = true)]
         public Guid SponsorshipId { get; set; }
+
+        [EntityReferenceMap("msnfp_CustomerId")]
+        public Guid? CustomerId { get; set; }
+
+        public int? CustomerIdType { get; set; }
 
         [EntityReferenceMap("msnfp_EventId")]
         [EntityLogicalName("msnfp_Event")]
@@ -22,11 +27,11 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityLogicalName("msnfp_EventSponsorship")]
         public Guid? EventSponsorshipId { get; set; }
 
-		[EntityNameMap("msnfp_Amount_Receipted")]
+        [EntityNameMap("msnfp_Amount_Receipted", PushToDataverse = true)]
         [Column(TypeName = "money")]
         public decimal? AmountReceipted { get; set; }
 
-        [EntityNameMap("msnfp_Amount_Nonreceiptable")]
+        [EntityNameMap("msnfp_Amount_Nonreceiptable", PushToDataverse = true)]
         [Column(TypeName = "money")]
         public decimal? AmountNonreceiptable { get; set; }
 

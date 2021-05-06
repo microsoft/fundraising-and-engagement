@@ -3,7 +3,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_tributeormemory")]
+    [EntityLogicalName("msnfp_tributeormemory")]
     public partial class TributeOrMemory : PaymentEntity, IIdentifierEntity
     {
         [EntityNameMap("msnfp_tributeormemoryid")]

@@ -4,10 +4,10 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_eventproduct")]
+    [EntityLogicalName("msnfp_eventproduct")]
     public partial class EventProduct : PaymentEntity, IIdentifierEntity
     {
-        [EntityNameMap("msnfp_eventproductid")]
+        [EntityNameMap("msnfp_eventproductid", PushToDataverse = true)]
         public Guid EventProductId { get; set; }
 
         [EntityReferenceMap("msnfp_eventid")]
@@ -18,7 +18,7 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityLogicalName("transactioncurrency")]
         public Guid? TransactionCurrencyId { get; set; }
 
-		[EntityNameMap("msnfp_amount")]
+        [EntityNameMap("msnfp_amount")]
         [Column(TypeName = "money")]
         public decimal? Amount { get; set; }
 
@@ -39,7 +39,6 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_name")]
         public string Name { get; set; }
 
-        [EntityOptionSetMap("msnfp_productsavailable")]
         public int? ValAvailable { get; set; }
 
         [EntityOptionSetMap("msnfp_quantity")]

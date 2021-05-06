@@ -3,7 +3,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_MembershipOrder")]
+    [EntityLogicalName("msnfp_MembershipOrder")]
     public partial class MembershipOrder : PaymentEntity, IIdentifierEntity
     {
         [EntityNameMap("msnfp_MembershipOrder")]

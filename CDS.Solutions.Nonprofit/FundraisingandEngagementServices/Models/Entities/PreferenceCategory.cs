@@ -1,10 +1,10 @@
-﻿using FundraisingandEngagement.Models.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_PreferenceCategory")]
+    [EntityLogicalName("msnfp_PreferenceCategory")]
     public partial class PreferenceCategory : PaymentEntity
     {
         public PreferenceCategory()
@@ -21,6 +21,6 @@ namespace FundraisingandEngagement.Models.Entities
 
         public virtual ICollection<Preference> Preference { get; set; }
 
-        public virtual ICollection<EventPreference> EventPreference { get; set; } 
+        public virtual ICollection<EventPreference> EventPreference { get; set; }
     }
 }

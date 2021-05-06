@@ -5,21 +5,23 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class MembershipCategoryWorker : FactoryFloor<MembershipCategory>
+    public class MembershipCategoryWorker : IFactoryFloor<MembershipCategory>
     {
+        private PaymentContext DataContext;
+
         public MembershipCategoryWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
 
-        public override MembershipCategory GetById(Guid recordID)
+        public MembershipCategory GetById(Guid recordID)
         {
             return DataContext.MembershipCategory.FirstOrDefault(c => c.MembershipCategoryId == recordID);
         }
 
 
-        public override int UpdateCreate(MembershipCategory updateRecord)
+        public int UpdateCreate(MembershipCategory updateRecord)
         {
 
             if (Exists(updateRecord.MembershipCategoryId))
@@ -42,7 +44,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             MembershipCategory existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -59,7 +61,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.MembershipCategory.Any(x => x.MembershipCategoryId == guid);
         }

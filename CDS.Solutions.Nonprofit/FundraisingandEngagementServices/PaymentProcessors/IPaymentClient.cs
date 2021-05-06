@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace PaymentProcessors
 {
-	internal interface IPaymentClient<in TInput, TResult>
-	{
-		Task<TResult> MakePaymentAsync(TInput input, CancellationToken cancellationToken = default);
-	}
+    internal interface IPaymentClient<in TInput, TResult>
+    {
+        Task<TResult> MakePaymentAsync(TInput input, CancellationToken cancellationToken = default);
+    }
 }

@@ -338,6 +338,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
 /API/Properties
 **/appsettings.Test.json
 **/appsettings.Development.json
+**/Properties/**/profile.arm.json

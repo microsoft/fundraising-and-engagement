@@ -5,21 +5,23 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class EventPreferenceWorker : FactoryFloor<EventPreference>
+    public class EventPreferenceWorker : IFactoryFloor<EventPreference>
     {
+        private PaymentContext DataContext;
+
         public EventPreferenceWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override EventPreference GetById(Guid eventPreferenceId)
+        public EventPreference GetById(Guid eventPreferenceId)
         {
             return DataContext.EventPreference.FirstOrDefault(t => t.EventPreferenceId == eventPreferenceId);
         }
 
 
 
-        public override int UpdateCreate(EventPreference eventPreferenceRecord)
+        public int UpdateCreate(EventPreference eventPreferenceRecord)
         {
 
             if (Exists(eventPreferenceRecord.EventPreferenceId))
@@ -41,7 +43,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             EventPreference existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -58,7 +60,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.EventPreference.Any(x => x.EventPreferenceId == guid);
         }

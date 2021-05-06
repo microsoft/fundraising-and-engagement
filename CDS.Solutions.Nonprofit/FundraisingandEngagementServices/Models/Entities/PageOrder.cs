@@ -3,7 +3,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_pageorder")]
+    [EntityLogicalName("msnfp_pageorder")]
     public class PageOrder : PaymentEntity
     {
         public PageOrder()
@@ -26,7 +26,7 @@ namespace FundraisingandEngagement.Models.Entities
         //public int? ImportSequenceNumber { get; set; }
 
         [EntityNameMap("msnfp_order")]
-        public int? Order{ get; set; }
+        public int? Order { get; set; }
 
         [EntityNameMap("msnfp_orderdate")]
         public DateTime? OrderDate { get; set; }

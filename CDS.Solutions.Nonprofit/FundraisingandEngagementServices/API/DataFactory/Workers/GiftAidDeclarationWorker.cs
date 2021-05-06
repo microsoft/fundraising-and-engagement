@@ -5,21 +5,23 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory
 {
-	public class GiftAidDeclarationWorker : FactoryFloor<GiftAidDeclaration>
+    public class GiftAidDeclarationWorker : IFactoryFloor<GiftAidDeclaration>
     {
+        private PaymentContext DataContext;
+
 
         public GiftAidDeclarationWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override GiftAidDeclaration GetById(Guid GiftAidDeclarationId)
+        public GiftAidDeclaration GetById(Guid GiftAidDeclarationId)
         {
             return DataContext.GiftAidDeclaration.FirstOrDefault(t => t.GiftAidDeclarationId == GiftAidDeclarationId);
         }
 
 
-        public override int UpdateCreate(GiftAidDeclaration updateRecord)
+        public int UpdateCreate(GiftAidDeclaration updateRecord)
         {
             if (Exists(updateRecord.GiftAidDeclarationId))
             {
@@ -40,7 +42,7 @@ namespace FundraisingandEngagement.DataFactory
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             GiftAidDeclaration existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -57,7 +59,7 @@ namespace FundraisingandEngagement.DataFactory
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.GiftAidDeclaration.Any(x => x.GiftAidDeclarationId == guid);
         }

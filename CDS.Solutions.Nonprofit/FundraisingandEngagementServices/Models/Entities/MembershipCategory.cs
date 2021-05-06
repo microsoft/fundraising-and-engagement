@@ -1,7 +1,7 @@
-﻿using FundraisingandEngagement.Models.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
@@ -48,12 +48,12 @@ namespace FundraisingandEngagement.Models.Entities
 
         public virtual TransactionCurrency TransactionCurrency { get; set; }
 
-		public virtual ICollection<Membership> Membership { get; set; }
+        public virtual ICollection<Membership> Membership { get; set; }
 
         public virtual ICollection<MembershipOrder> MembershipOrder { get; set; }
 
-		public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
 
-		public virtual ICollection<PaymentSchedule> PaymentSchedules { get; set; }
-	}
+        public virtual ICollection<PaymentSchedule> PaymentSchedules { get; set; }
+    }
 }
