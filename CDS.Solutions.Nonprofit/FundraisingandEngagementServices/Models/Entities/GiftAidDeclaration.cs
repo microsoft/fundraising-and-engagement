@@ -3,11 +3,16 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_GiftAidDeclaration")]
-    public partial class GiftAidDeclaration : ContactPaymentEntity, IIdentifierEntity
+    [EntityLogicalName("msnfp_GiftAidDeclaration")]
+    public partial class GiftAidDeclaration : PaymentEntity, IContactPaymentEntity, IIdentifierEntity
     {
         [EntityNameMap("msnfp_giftaiddeclarationid")]
-        public Guid GiftAidDeclarationId { get; set; }      
+        public Guid GiftAidDeclarationId { get; set; }
+
+        [EntityReferenceMap("msnfp_CustomerId")]
+        public Guid? CustomerId { get; set; }
+
+        public int? CustomerIdType { get; set; }
 
         [EntityNameMap("msnfp_declarationdate")]
         public DateTime? DeclarationDate { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace FundraisingandEngagement.Models.Enums
 {
-	public enum WorldPayOrderType
+    public enum WorldPayOrderType
     {
         ECOM = 0,
         RECURRING = 1,

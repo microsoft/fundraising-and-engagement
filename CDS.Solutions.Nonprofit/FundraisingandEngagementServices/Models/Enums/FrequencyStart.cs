@@ -1,6 +1,6 @@
 ﻿namespace FundraisingandEngagement.Models.Enums
 {
-	public enum FrequencyStart
+    public enum FrequencyStart
     {
 
         CurrentDay = 844060000,

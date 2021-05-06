@@ -1,10 +1,10 @@
-﻿using FundraisingandEngagement.Models.Attributes;
+﻿using System;
+using FundraisingandEngagement.Models.Attributes;
 using FundraisingandEngagement.Models.Entities;
-using System;
 
 namespace FundraisingandEngagement
 {
-	[EntityLogicalName("msnfp_relatedimage")]
+    [EntityLogicalName("msnfp_relatedimage")]
     public partial class RelatedImage : PaymentEntity, IIdentifierEntity
     {
         [EntityNameMap("msnfp_relatedimageid")]

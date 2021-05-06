@@ -4,7 +4,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_receiptstack")]
+    [EntityLogicalName("msnfp_receiptstack")]
     public partial class ReceiptStack : PaymentEntity, IIdentifierEntity
     {
         public ReceiptStack()
@@ -38,9 +38,9 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_Identifier")]
         public string Identifier { get; set; }
 
-		public Guid? OwningBusinessUnitId { get; set; }
+        public Guid? OwningBusinessUnitId { get; set; }
 
-		public virtual Configuration Configuration { get; set; }
+        public virtual Configuration Configuration { get; set; }
 
         public virtual ICollection<Receipt> Receipt { get; set; }
 

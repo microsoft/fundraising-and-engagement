@@ -5,46 +5,46 @@ using FundraisingandEngagement.Models.Enums;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("contact")]
-	public class Contact : PaymentEntity, ICustomer
+    [EntityLogicalName("contact")]
+    public class Contact : PaymentEntity, ICustomer
     {
-		[EntityNameMap("contactid")]
+        [EntityNameMap("contactid", PushToDataverse = true)]
         public Guid ContactId { get; set; }
         public Guid CustomerId => ContactId;
 
 
-		//[EntityLogicalName("customeraddress")]
-		//[EntityReferenceMap("Address1_AddressId")]
-		public Guid? Address1_AddressId { get; set; }
-		//[EntityLogicalName("customeraddress")]
-		//[EntityReferenceMap("Address2_AddressId")]
+        //[EntityLogicalName("customeraddress")]
+        [EntityReferenceMap("Address1_AddressId")]
+        public Guid? Address1_AddressId { get; set; }
+        //[EntityLogicalName("customeraddress")]
+        [EntityReferenceMap("Address2_AddressId")]
         public Guid? Address2_AddressId { get; set; }
-		//[EntityLogicalName("customeraddress")]
-		//[EntityReferenceMap("Address3_AddressId")]
+        //[EntityLogicalName("customeraddress")]
+        [EntityReferenceMap("Address3_AddressId")]
         public Guid? Address3_AddressId { get; set; }
-		//[EntityLogicalName("contact")]
-		//[EntityReferenceMap("MasterId")]
+        //[EntityLogicalName("contact")]
+        [EntityReferenceMap("MasterId")]
         public Guid? MasterId { get; set; }
-		//[EntityLogicalName("businessunit")]
-		//[EntityReferenceMap("OwningBusinessUnit")]
+        //[EntityLogicalName("businessunit")]
+        [EntityReferenceMap("OwningBusinessUnit")]
         public Guid? OwningBusinessUnitId { get; set; }
-		//[EntityLogicalName("msnfp_givinglevelinstance")]
-		//[EntityReferenceMap("msnfp_givinglevelid")]
+        //[EntityLogicalName("msnfp_givinglevelinstance")]
+        [EntityReferenceMap("msnfp_givinglevelid")]
         public Guid? msnfp_GivingLevelId { get; set; }
-		//[EntityLogicalName("msnfp_eventpackage")]
-		//[EntityReferenceMap("msnfp_lasteventpackageid")]
+        //[EntityLogicalName("msnfp_eventpackage")]
+        [EntityReferenceMap("msnfp_lasteventpackageid")]
         public Guid? msnfp_LastEventPackageId { get; set; }
-		//[EntityLogicalName("msnfp_transaction")]
-		//[EntityReferenceMap("msnfp_lasttransactionid")]
+        //[EntityLogicalName("msnfp_transaction")]
+        [EntityReferenceMap("msnfp_lasttransactionid")]
         public Guid? msnfp_LastTransactionId { get; set; }
-		//[EntityLogicalName("msnfp_membership")]
-		//[EntityReferenceMap("msnfp_primarymembershipid")]
+        //[EntityLogicalName("msnfp_membership")]
+        [EntityReferenceMap("msnfp_primarymembershipid")]
         public Guid? msnfp_PrimaryMembershipId { get; set; }
-		//[EntityLogicalName("account")]
-		//[EntityReferenceMap("ParentCustomerId")]
+        //[EntityLogicalName("account")]
+        [EntityReferenceMap("ParentCustomerId")]
         public Guid? ParentCustomerId { get; set; }
-		//[EntityLogicalName("transactioncurrency")]
-		//[EntityReferenceMap("TransactionCurrencyId")]
+        //[EntityLogicalName("transactioncurrency")]
+        [EntityReferenceMap("TransactionCurrencyId")]
         public Guid? TransactionCurrencyId { get; set; }
 
 
@@ -129,122 +129,120 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("address3_stateorprovince")]
         public string Address3_StateOrProvince { get; set; }
 
-        [EntityNameMap("birthdate", Format = "yyyy-MM-dd")]
-		public DateTime? BirthDate { get; set; }
-		[EntityNameMap("donotbulkemail")]
+        [EntityNameMap("msnfp_birthday", Format = "yyyy-MM-dd")]
+        public DateTime? BirthDate { get; set; }
+        [EntityNameMap("donotbulkemail")]
         public bool? DoNotBulkEMail { get; set; }
-		[EntityNameMap("donotbulkpostalmail")]
+        [EntityNameMap("donotbulkpostalmail")]
         public bool? DoNotBulkPostalMail { get; set; }
-		[EntityNameMap("donotemail")]
+        [EntityNameMap("donotemail")]
         public bool? DoNotEmail { get; set; }
-		[EntityNameMap("donotfax")]
+        [EntityNameMap("donotfax")]
         public bool? DoNotFax { get; set; }
-		[EntityNameMap("donotphone")]
+        [EntityNameMap("donotphone")]
         public bool? DoNotPhone { get; set; }
-		[EntityNameMap("donotpostalmail")]
+        [EntityNameMap("donotpostalmail")]
         public bool? DoNotPostalMail { get; set; }
-		[EntityNameMap("donotsendmm")]
+        [EntityNameMap("donotsendmm")]
         public bool? DoNotSendMM { get; set; }
-		[EntityNameMap("emailaddress1")]
+        [EntityNameMap("emailaddress1")]
         public string EmailAddress1 { get; set; }
-		[EntityNameMap("emailaddress2")]
+        [EntityNameMap("emailaddress2")]
         public string EmailAddress2 { get; set; }
-		[EntityNameMap("emailaddress3")]
+        [EntityNameMap("emailaddress3")]
         public string EmailAddress3 { get; set; }
-		[EntityNameMap("firstname")]
+        [EntityNameMap("firstname")]
         public string FirstName { get; set; }
-		[EntityNameMap("fullname")]
+        [EntityNameMap("fullname")]
         public string FullName { get; set; }
-		[EntityOptionSetMap("gendercode")]
+        [EntityOptionSetMap("gendercode")]
         public int? GenderCode { get; set; }
-		[EntityNameMap("jobtitle")]
+        [EntityNameMap("jobtitle")]
         public string JobTitle { get; set; }
-		[EntityNameMap("lastname")]
+        [EntityNameMap("lastname")]
         public string LastName { get; set; }
-		[EntityNameMap("msnfp_age")]
-		public int? msnfp_Age { get; set; }
-		[EntityNameMap("msnfp_anonymity")]
+        [EntityNameMap("msnfp_age")]
+        public int? msnfp_Age { get; set; }
+        [EntityNameMap("msnfp_anonymity")]
         public int? msnfp_Anonymity { get; set; }
 
-		[EntityNameMap("msnfp_count_lifetimetransactions")]
+        [EntityNameMap("msnfp_count_lifetimetransactions")]
         public int? msnfp_Count_LifetimeTransactions { get; set; }
-		[EntityNameMap("msnfp_lasteventpackagedate", Format = "yyyy-MM-dd")]
+        [EntityNameMap("msnfp_lasteventpackagedate", Format = "yyyy-MM-dd")]
         public DateTime? msnfp_LastEventPackageDate { get; set; }
-		[EntityNameMap("msnfp_lasttransactiondate", Format = "yyyy-MM-dd")]
+        [EntityNameMap("msnfp_lasttransactiondate", Format = "yyyy-MM-dd")]
         public DateTime? msnfp_LastTransactionDate { get; set; }
-		[EntityOptionSetMap("msnfp_preferredlanguagecode")]
+        [EntityOptionSetMap("msnfp_preferredlanguagecode")]
         public int? msnfp_PreferredLanguageCode { get; set; }
-		[EntityOptionSetMap("msnfp_receiptpreferencecode")]
+        [EntityOptionSetMap("msnfp_receiptpreferencecode")]
         public int? msnfp_ReceiptPreferenceCode { get; set; }
-		[Column(TypeName = "money")]
-		[EntityNameMap("msnfp_sum_lifetimetransactions")]
+        [Column(TypeName = "money")]
+        [EntityNameMap("msnfp_sum_lifetimetransactions")]
         public decimal? msnfp_Sum_LifetimeTransactions { get; set; }
-		[EntityOptionSetMap("msnfp_telephone1typecode")]
+        [EntityOptionSetMap("msnfp_telephone1typecode")]
         public int? msnfp_telephone1typecode { get; set; }
-		[EntityOptionSetMap("msnfp_telephone2typecode")]
+        [EntityOptionSetMap("msnfp_telephone2typecode")]
         public int? msnfp_telephone2typecode { get; set; }
-		[EntityOptionSetMap("msnfp_telephone3typecode")]
+        [EntityOptionSetMap("msnfp_telephone3typecode")]
         public int? msnfp_telephone3typecode { get; set; }
-		[EntityNameMap("msnfp_upcomingbirthday", Format = "yyyy-MM-dd")]
+        [EntityNameMap("msnfp_upcomingbirthday", Format = "yyyy-MM-dd")]
         public DateTime? msnfp_UpcomingBirthday { get; set; }
-		
+
         [EntityNameMap("msnfp_vip")]
         public bool? msnfp_Vip { get; set; }
-		[EntityNameMap("merged")]
+        [EntityNameMap("merged")]
         public bool? Merged { get; set; }
-		[EntityNameMap("middlename")]
+        [EntityNameMap("middlename")]
         public string MiddleName { get; set; }
-		[EntityNameMap("mobilephone")]
-        public string MobilePhone { get; set; }        
-        
-        public int? ParentCustomerIdType { get; set; }
+        [EntityNameMap("mobilephone")]
+        public string MobilePhone { get; set; }
 
-		[EntityNameMap("salutation")]
+        [EntityNameMap("salutation")]
         public string Salutation { get; set; }
-		[EntityNameMap("suffix")]
+        [EntityNameMap("suffix")]
         public string Suffix { get; set; }
-		[EntityNameMap("telephone1")]
+        [EntityNameMap("telephone1")]
         public string Telephone1 { get; set; }
-		[EntityNameMap("telephone2")]
+        [EntityNameMap("telephone2")]
         public string Telephone2 { get; set; }
-		[EntityNameMap("telephone3")]
+        [EntityNameMap("telephone3")]
         public string Telephone3 { get; set; }
 
         //[EntityLogicalName("account")]
-        //[EntityReferenceMap("msnfp_HouseholdId")]
-		public Guid? msnfp_householdid { get; set; }
+        [EntityReferenceMap("msnfp_HouseholdId")]
+        public Guid? msnfp_householdid { get; set; }
 
-		[EntityOptionSetMap("msnfp_year0_category")]
-		public DonorType? msnfp_year0_category { get; set; }
-		[Column(TypeName = "money")]
-		[EntityNameMap("msnfp_year0_giving")]
-		public decimal? msnfp_year0_giving { get; set; }
-		[EntityOptionSetMap("msnfp_year1_category")]
-		public DonorType? msnfp_year1_category { get; set; }
-		[Column(TypeName = "money")]
-		[EntityNameMap("msnfp_year1_giving")]
-		public decimal? msnfp_year1_giving { get; set; }
-		[EntityOptionSetMap("msnfp_year2_category")]
-		public DonorType? msnfp_year2_category { get; set; }
-		[Column(TypeName = "money")]
-		[EntityNameMap("msnfp_year2_giving")]
-		public decimal? msnfp_year2_giving { get; set; }
-		[EntityOptionSetMap("msnfp_year3_category")]
-		public DonorType? msnfp_year3_category { get; set; }
-		[Column(TypeName = "money")]
-		[EntityNameMap("msnfp_year3_giving")]
-		public decimal? msnfp_year3_giving { get; set; }
-		[EntityOptionSetMap("msnfp_year4_category")]
-		public DonorType? msnfp_year4_category { get; set; }
-		[Column(TypeName = "money")]
-		[EntityNameMap("msnfp_year4_giving")]
-		public decimal? msnfp_year4_giving { get; set; }
+        [EntityOptionSetMap("msnfp_year0_category", PushToDataverse = true)]
+        public DonorType? msnfp_year0_category { get; set; }
+        [Column(TypeName = "money")]
+        [EntityNameMap("msnfp_year0_giving", PushToDataverse = true)]
+        public decimal? msnfp_year0_giving { get; set; }
+        [EntityOptionSetMap("msnfp_year1_category", PushToDataverse = true)]
+        public DonorType? msnfp_year1_category { get; set; }
+        [Column(TypeName = "money")]
+        [EntityNameMap("msnfp_year1_giving", PushToDataverse = true)]
+        public decimal? msnfp_year1_giving { get; set; }
+        [EntityOptionSetMap("msnfp_year2_category", PushToDataverse = true)]
+        public DonorType? msnfp_year2_category { get; set; }
+        [Column(TypeName = "money")]
+        [EntityNameMap("msnfp_year2_giving", PushToDataverse = true)]
+        public decimal? msnfp_year2_giving { get; set; }
+        [EntityOptionSetMap("msnfp_year3_category", PushToDataverse = true)]
+        public DonorType? msnfp_year3_category { get; set; }
+        [Column(TypeName = "money")]
+        [EntityNameMap("msnfp_year3_giving", PushToDataverse = true)]
+        public decimal? msnfp_year3_giving { get; set; }
+        [EntityOptionSetMap("msnfp_year4_category", PushToDataverse = true)]
+        public DonorType? msnfp_year4_category { get; set; }
+        [Column(TypeName = "money")]
+        [EntityNameMap("msnfp_year4_giving", PushToDataverse = true)]
+        public decimal? msnfp_year4_giving { get; set; }
 
-		[Column(TypeName = "money")]
-		[EntityNameMap("msnfp_lifetimegivingsum")]
-		public decimal? msnfp_lifetimegivingsum { get; set; }
+        [Column(TypeName = "money")]
+        [EntityNameMap("msnfp_lifetimegivingsum", PushToDataverse = true)]
+        public decimal? msnfp_lifetimegivingsum { get; set; }
 
-		public virtual TransactionCurrency TransactionCurrency { get; set; }
+        public virtual TransactionCurrency TransactionCurrency { get; set; }
 
         public virtual EventPackage msnfp_LastEventPackage { get; set; }
 
@@ -252,6 +250,6 @@ namespace FundraisingandEngagement.Models.Entities
 
         public virtual Membership msnfp_PrimaryMembership { get; set; }
 
-		public virtual Account msnfp_household { get; set; }
+        public virtual Account msnfp_household { get; set; }
     }
 }

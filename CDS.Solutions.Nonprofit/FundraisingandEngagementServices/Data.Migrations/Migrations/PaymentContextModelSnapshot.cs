@@ -316,8 +316,6 @@ namespace FundraisingandEngagement.Data.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.HasIndex("ParentAccountId");
-
                     b.HasIndex("TransactionCurrencyId");
 
                     b.HasIndex("msnfp_LastEventPackageId");
@@ -477,9 +475,6 @@ namespace FundraisingandEngagement.Data.Migrations
 
                     b.Property<int?>("ScheRetryinterval")
                         .HasColumnType("int");
-
-                    b.Property<bool>("ShouldSyncResponse")
-                        .HasColumnType("bit");
 
                     b.Property<int?>("StateCode")
                         .HasColumnType("int");
@@ -744,9 +739,6 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.Property<Guid?>("ParentCustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("ParentCustomerIdType")
-                        .HasColumnType("int");
-
                     b.Property<string>("Salutation")
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
@@ -879,6 +871,25 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.HasIndex("msnfp_householdid");
 
                     b.ToTable("Contact");
+                });
+
+            modelBuilder.Entity("FundraisingandEngagement.Models.Entities.DataverseSyncToken", b =>
+                {
+                    b.Property<string>("EntityLogicalName")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("TokenValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("EntityLogicalName");
+
+                    b.ToTable("DataverseSyncToken");
                 });
 
             modelBuilder.Entity("FundraisingandEngagement.Models.Entities.Designation", b =>
@@ -1174,9 +1185,6 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.Property<Guid?>("TeamOwnerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TermsOfReferenceId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("ThankYou")
                         .HasColumnType("nvarchar(max)");
 
@@ -1199,8 +1207,6 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.HasIndex("DesignationId");
 
                     b.HasIndex("PaymentProcessorId");
-
-                    b.HasIndex("TermsOfReferenceId");
 
                     b.HasIndex("TransactionCurrencyId");
 
@@ -2386,9 +2392,6 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.Property<int?>("CcBrandCode")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CcExpDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("CcExpMmYy")
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
@@ -2551,8 +2554,8 @@ namespace FundraisingandEngagement.Data.Migrations
                         .HasMaxLength(100);
 
                     b.Property<string>("MonerisApiKey")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
 
                     b.Property<string>("MonerisStoreId")
                         .HasColumnType("nvarchar(100)")
@@ -2587,8 +2590,8 @@ namespace FundraisingandEngagement.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("StripeServiceKey")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
 
                     b.Property<DateTime?>("SyncDate")
                         .HasColumnType("datetime2");
@@ -3147,8 +3150,6 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.HasIndex("PaymentScheduleId");
 
                     b.HasIndex("ReceiptStackId");
-
-                    b.HasIndex("ReplacesReceiptId");
 
                     b.HasIndex("TransactionCurrencyId");
 
@@ -3726,83 +3727,7 @@ namespace FundraisingandEngagement.Data.Migrations
 
                     b.HasKey("SyncExceptionId");
 
-                    b.HasIndex("TransactionId");
-
                     b.ToTable("SyncException");
-                });
-
-            modelBuilder.Entity("FundraisingandEngagement.Models.Entities.TermsOfReference", b =>
-                {
-                    b.Property<Guid>("TermsOfReferenceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CcvMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CoverCostsMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FailureMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Footer")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GiftAidAcceptence")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GiftAidDeclaration")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GiftAidDetails")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Identifier")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PrivacyPolicy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PrivacyUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("ShowPrivacy")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("ShowTermsConditions")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Signup")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("StateCode")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("StatusCode")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("SyncDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TermsConditions")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TermsConditionsUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TermsOfReferenceId");
-
-                    b.ToTable("TermsOfReference");
                 });
 
             modelBuilder.Entity("FundraisingandEngagement.Models.Entities.Ticket", b =>
@@ -4244,9 +4169,6 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.Property<decimal?>("ExchangeRate")
                         .HasColumnType("decimal(8, 2)");
 
-                    b.Property<bool?>("IsBase")
-                        .HasColumnType("bit");
-
                     b.Property<string>("IsoCurrencyCode")
                         .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
@@ -4349,11 +4271,6 @@ namespace FundraisingandEngagement.Data.Migrations
 
             modelBuilder.Entity("FundraisingandEngagement.Models.Entities.Account", b =>
                 {
-                    b.HasOne("FundraisingandEngagement.Models.Entities.Account", "ParentAccount")
-                        .WithMany("ChildAccount")
-                        .HasForeignKey("ParentAccountId")
-                        .HasConstraintName("FK__Account__ParentAccountId__0A688BB5");
-
                     b.HasOne("FundraisingandEngagement.Models.Entities.TransactionCurrency", "TransactionCurrency")
                         .WithMany()
                         .HasForeignKey("TransactionCurrencyId");
@@ -4361,17 +4278,20 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.HasOne("FundraisingandEngagement.Models.Entities.EventPackage", "msnfp_LastEventPackage")
                         .WithMany("Account")
                         .HasForeignKey("msnfp_LastEventPackageId")
-                        .HasConstraintName("FK__Account__LastEventPackageId__0A688BB2");
+                        .HasConstraintName("FK__Account__LastEventPackageId__0A688BB2")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.Transaction", "msnfp_LastTransaction")
                         .WithMany("Account")
                         .HasForeignKey("msnfp_LastTransactionId")
-                        .HasConstraintName("FK__Account__LastTransactionId__0A688BB3");
+                        .HasConstraintName("FK__Account__LastTransactionId__0A688BB3")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.Membership", "msnfp_PrimaryMembership")
                         .WithMany("Account")
                         .HasForeignKey("msnfp_PrimaryMembershipId")
-                        .HasConstraintName("FK__Account__PrimaryMembershipId__0A688BB4");
+                        .HasConstraintName("FK__Account__PrimaryMembershipId__0A688BB4")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("FundraisingandEngagement.Models.Entities.Configuration", b =>
@@ -4391,22 +4311,26 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.HasOne("FundraisingandEngagement.Models.Entities.EventPackage", "msnfp_LastEventPackage")
                         .WithMany("Contact")
                         .HasForeignKey("msnfp_LastEventPackageId")
-                        .HasConstraintName("FK__Contact__LastEventPackageId__0A688BB6");
+                        .HasConstraintName("FK__Contact__LastEventPackageId__0A688BB6")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.Transaction", "msnfp_LastTransaction")
                         .WithMany("Contact")
                         .HasForeignKey("msnfp_LastTransactionId")
-                        .HasConstraintName("FK__Contact__LastTransactionId__0A688BB7");
+                        .HasConstraintName("FK__Contact__LastTransactionId__0A688BB7")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.Membership", "msnfp_PrimaryMembership")
                         .WithMany("Contact")
                         .HasForeignKey("msnfp_PrimaryMembershipId")
-                        .HasConstraintName("FK__Contact__PrimaryMembershipId__0A688BB8");
+                        .HasConstraintName("FK__Contact__PrimaryMembershipId__0A688BB8")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.Account", "msnfp_household")
                         .WithMany("HouseholdMember")
                         .HasForeignKey("msnfp_householdid")
-                        .HasConstraintName("FK__Contact__HouseHold__0A688BB9");
+                        .HasConstraintName("FK__Contact__HouseHold__0A688BB9")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("FundraisingandEngagement.Models.Entities.Event", b =>
@@ -4424,11 +4348,6 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.HasOne("FundraisingandEngagement.Models.Entities.PaymentProcessor", "PaymentProcessor")
                         .WithMany()
                         .HasForeignKey("PaymentProcessorId");
-
-                    b.HasOne("FundraisingandEngagement.Models.Entities.TermsOfReference", "TermsOfReference")
-                        .WithMany("Events")
-                        .HasForeignKey("TermsOfReferenceId")
-                        .HasConstraintName("FK__Event__TermsOfRe__01D345B0");
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.TransactionCurrency", "TransactionCurrency")
                         .WithMany()
@@ -4668,11 +4587,6 @@ namespace FundraisingandEngagement.Data.Migrations
                         .HasForeignKey("ReceiptStackId")
                         .HasConstraintName("FK__Receipt__Receipt__7755B73D");
 
-                    b.HasOne("FundraisingandEngagement.Models.Entities.Receipt", "ReplacesReceipt")
-                        .WithMany("InverseReplacesReceipt")
-                        .HasForeignKey("ReplacesReceiptId")
-                        .HasConstraintName("FK__Receipt__Replace__793DFFAF");
-
                     b.HasOne("FundraisingandEngagement.Models.Entities.TransactionCurrency", "TransactionCurrency")
                         .WithMany()
                         .HasForeignKey("TransactionCurrencyId");
@@ -4738,17 +4652,20 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.HasOne("FundraisingandEngagement.Models.Entities.PaymentSchedule", "PaymentSchedule")
                         .WithMany("Response")
                         .HasForeignKey("PaymentScheduleId")
-                        .HasConstraintName("FK__Response__Paymen__7EF6D905");
+                        .HasConstraintName("FK__Response__Paymen__7EF6D905")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.Registration", "RegistrationPackage")
                         .WithMany("Response")
                         .HasForeignKey("RegistrationPackageId")
-                        .HasConstraintName("FK__Response__Regist__7FEAFD3E");
+                        .HasConstraintName("FK__Response__Regist__7FEAFD3E")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.Transaction", "Transaction")
                         .WithMany("Response")
                         .HasForeignKey("TransactionId")
-                        .HasConstraintName("FK__Response__Transa__7E02B4CC");
+                        .HasConstraintName("FK__Response__Transa__7E02B4CC")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("FundraisingandEngagement.Models.Entities.Sponsorship", b =>
@@ -4773,13 +4690,6 @@ namespace FundraisingandEngagement.Data.Migrations
                         .HasConstraintName("FK__Sponsorsh__Event__17C286CF");
                 });
 
-            modelBuilder.Entity("FundraisingandEngagement.Models.Entities.SyncLog", b =>
-                {
-                    b.HasOne("FundraisingandEngagement.Models.Entities.Transaction", "Transaction")
-                        .WithMany("SyncLogs")
-                        .HasForeignKey("TransactionId");
-                });
-
             modelBuilder.Entity("FundraisingandEngagement.Models.Entities.Ticket", b =>
                 {
                     b.HasOne("FundraisingandEngagement.Models.Entities.Event", "Event")
@@ -4802,22 +4712,26 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.HasOne("FundraisingandEngagement.Models.Entities.Configuration", "Configuration")
                         .WithMany("Transaction")
                         .HasForeignKey("ConfigurationId")
-                        .HasConstraintName("FK__Transacti__Confi__625A9A57");
+                        .HasConstraintName("FK__Transacti__Confi__625A9A57")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.Event", "Event")
                         .WithMany("Transaction")
                         .HasForeignKey("EventId")
-                        .HasConstraintName("FK__Transacti__Event__65370702");
+                        .HasConstraintName("FK__Transacti__Event__65370702")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.MembershipCategory", "MembershipCategory")
                         .WithMany("Transactions")
                         .HasForeignKey("MembershipId")
-                        .HasConstraintName("FK__Transacti__Membe__625A9A58");
+                        .HasConstraintName("FK__Transacti__Membe__625A9A58")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.Membership", "Membership")
                         .WithMany("Transactions")
                         .HasForeignKey("MembershipInstanceId")
-                        .HasConstraintName("FK__Transacti__Membe__625A9A59");
+                        .HasConstraintName("FK__Transacti__Membe__625A9A59")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.PaymentProcessor", "PaymentProcessor")
                         .WithMany()
@@ -4834,12 +4748,14 @@ namespace FundraisingandEngagement.Data.Migrations
                     b.HasOne("FundraisingandEngagement.Models.Entities.PaymentMethod", "TransactionPaymentMethod")
                         .WithMany("Transactions")
                         .HasForeignKey("TransactionPaymentMethodId")
-                        .HasConstraintName("FK__Transacti__trans__6166761E");
+                        .HasConstraintName("FK__Transacti__trans__6166761E")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FundraisingandEngagement.Models.Entities.PaymentSchedule", "TransactionPaymentSchedule")
                         .WithMany("Transaction")
                         .HasForeignKey("TransactionPaymentScheduleId")
-                        .HasConstraintName("FK__Transacti__trans__634EBE90");
+                        .HasConstraintName("FK__Transacti__trans__634EBE90")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 #pragma warning restore 612, 618
         }

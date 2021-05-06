@@ -3,7 +3,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_EventDisclaimer")]
+    [EntityLogicalName("msnfp_EventDisclaimer")]
     public partial class EventDisclaimer : PaymentEntity, IIdentifierEntity
     {
         [EntityNameMap("msnfp_EventDisclaimerid")]

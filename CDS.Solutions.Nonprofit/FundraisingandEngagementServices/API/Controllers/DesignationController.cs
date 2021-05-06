@@ -1,43 +1,26 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
 using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
     public class DesignationController : ControllerBase
     {
-        private static DesignationWorker _DesignationWorker;
+        private static IFactoryFloor<Designation> _DesignationWorker;
 
-        public DesignationController(DataFactory dataFactory)
+        public DesignationController(IDataFactory dataFactory)
         {
-            _DesignationWorker = (DesignationWorker)dataFactory.GetDataFactory<Designation>();
+            _DesignationWorker = dataFactory.GetDataFactory<Designation>();
         }
-
-        // GET api/Designation/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var DesignationRecord = _DesignationWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(DesignationRecord);
-
-            return json;
-        }
-
 
         // POST api/Designation/CreateDesignation (Body is JSON)
         [HttpPost]

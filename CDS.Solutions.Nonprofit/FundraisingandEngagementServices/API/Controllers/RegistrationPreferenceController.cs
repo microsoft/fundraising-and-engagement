@@ -1,39 +1,23 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
-using FundraisingandEngagement.Models.Entities;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class RegistrationPreferenceController : ControllerBase
     {
-        private static RegistrationPreferenceWorker _registrationPreferenceWorker;
+        private static IFactoryFloor<RegistrationPreference> _registrationPreferenceWorker;
 
-        public RegistrationPreferenceController(DataFactory dataFactory)
+        public RegistrationPreferenceController(IDataFactory dataFactory)
         {
-            _registrationPreferenceWorker = (RegistrationPreferenceWorker)dataFactory.GetDataFactory<RegistrationPreference>();
-        }
-
-        // GET api/Registration Preference/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var registrationPreferenceRecord = _registrationPreferenceWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(registrationPreferenceRecord);
-
-            return json;
+            _registrationPreferenceWorker = dataFactory.GetDataFactory<RegistrationPreference>();
         }
 
         // POST api/Registration Preference/CreateRegistrationPreference (Body is JSON)

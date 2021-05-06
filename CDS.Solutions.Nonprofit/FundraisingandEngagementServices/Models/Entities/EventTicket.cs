@@ -5,7 +5,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_EventTicket")]
+    [EntityLogicalName("msnfp_EventTicket")]
     public partial class EventTicket : PaymentEntity, IIdentifierEntity
     {
         public EventTicket()
@@ -13,7 +13,7 @@ namespace FundraisingandEngagement.Models.Entities
             Registration = new HashSet<Registration>();
         }
 
-        [EntityNameMap("msnfp_EvenTicketid")]
+        [EntityNameMap("msnfp_EvenTicketid", PushToDataverse = true)]
         public Guid EvenTicketId { get; set; }
 
         [EntityReferenceMap("msnfp_EventId")]
@@ -24,7 +24,7 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityLogicalName("transactioncurrency")]
         public Guid? TransactionCurrencyId { get; set; }
 
-		[EntityNameMap("msnfp_Amount")]
+        [EntityNameMap("msnfp_Amount")]
         [Column(TypeName = "money")]
         public decimal? Amount { get; set; }
 
@@ -70,7 +70,6 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_Identifier")]
         public string Identifier { get; set; }
 
-        [EntityNameMap("msnfp_Val_Tickets")]
         [Column(TypeName = "money")]
         public decimal? ValTickets { get; set; }
 

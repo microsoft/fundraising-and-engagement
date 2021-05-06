@@ -2,16 +2,18 @@
 
 namespace FundraisingandEngagement.Models.Attributes
 {
-	[AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
-	public sealed class EntityNameMap : Attribute
-	{
-		public string EntityName { get; }
+    [AttributeUsage(AttributeTargets.All)]
+    public sealed class EntityNameMap : Attribute
+    {
+        public string EntityName { get; }
 
-		public string Format { get; set; }
+        public string Format { get; set; }
 
-		public EntityNameMap(string entityName)
-		{
-			EntityName = entityName;
-		}
-	}
+        public bool PushToDataverse { get; set; } // must be false by default
+
+        public EntityNameMap(string entityName)
+        {
+            EntityName = entityName;
+        }
+    }
 }

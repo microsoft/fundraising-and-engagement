@@ -7,7 +7,7 @@ using FundraisingandEngagement.Models.Enums;
 namespace FundraisingandEngagement.Models.Entities
 {
     [EntityLogicalName("msnfp_PaymentSchedule")]
-    public partial class PaymentSchedule : ContactPaymentEntity
+    public partial class PaymentSchedule : PaymentEntity, IContactPaymentEntity
     {
         public PaymentSchedule()
         {
@@ -16,8 +16,13 @@ namespace FundraisingandEngagement.Models.Entities
             Transaction = new HashSet<Transaction>();
         }
 
-        [EntityNameMap("msnfp_PaymentScheduleid")]
+        [EntityNameMap("msnfp_PaymentScheduleid", PushToDataverse = true)]
         public Guid PaymentScheduleId { get; set; }
+
+        [EntityReferenceMap("msnfp_CustomerId")]
+        public Guid? CustomerId { get; set; }
+
+        public int? CustomerIdType { get; set; }
 
         [EntityReferenceMap("msnfp_PaymentMethodId")]
         [EntityLogicalName("msnfp_paymentmethod")]
@@ -116,7 +121,7 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityOptionSetMap("msnfp_frequencystartcode")]
         public FrequencyStart? FrequencyStartCode { get; set; }
 
-        [EntityNameMap("msnfp_nextpaymentdate", Format = "yyyy-MM-dd")]
+        [EntityNameMap("msnfp_nextpaymentdate", Format = "yyyy-MM-dd", PushToDataverse = true)]
         public DateTime? NextPaymentDate { get; set; }
 
         [EntityOptionSetMap("msnfp_frequency")]
@@ -134,7 +139,7 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_endondate")]
         public DateTime? EndonDate { get; set; }
 
-        [EntityNameMap("msnfp_lastpaymentdate")]
+        [EntityNameMap("msnfp_lastpaymentdate", PushToDataverse = true)]
         public DateTime? LastPaymentDate { get; set; }
 
         [EntityOptionSetMap("msnfp_scheduletypecode")]
@@ -242,21 +247,21 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_TributeMessage")]
         public string TributeMessage { get; set; }
 
-        [EntityNameMap("msnfp_numberoffailures")]
+        [EntityNameMap("msnfp_numberoffailures", PushToDataverse = true)]
         public int? NumberOfFailures { get; set; }
 
-        [EntityNameMap("msnfp_numberofsuccesses")]
+        [EntityNameMap("msnfp_numberofsuccesses", PushToDataverse = true)]
         public int? NumberOfSuccesses { get; set; }
 
-        [EntityNameMap("msnfp_concurrentfailures")]
+        [EntityNameMap("msnfp_concurrentfailures", PushToDataverse = true)]
         public int? ConcurrentFailures { get; set; }
 
         [Column(TypeName = "money")]
-        [EntityNameMap("msnfp_amountoffailures")]
+        [EntityNameMap("msnfp_amountoffailures", PushToDataverse = true)]
         public decimal? AmountOfFailures { get; set; }
 
         [Column(TypeName = "money")]
-        [EntityNameMap("msnfp_totalamount")]
+        [EntityNameMap("msnfp_totalamount", PushToDataverse = true)]
         public decimal? TotalAmount { get; set; }
 
         public virtual TransactionCurrency TransactionCurrency { get; set; }

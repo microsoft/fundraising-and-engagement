@@ -2,39 +2,23 @@
 using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
-using FundraisingandEngagement.Models.Entities;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class TributeOrMemoryController : ControllerBase
     {
-        private static TributeOrMemoryWorker _tributeOrMemoryWorker;
+        private static IFactoryFloor<TributeOrMemory> _tributeOrMemoryWorker;
 
-        public TributeOrMemoryController(DataFactory dataFactory)
+        public TributeOrMemoryController(IDataFactory dataFactory)
         {
-            _tributeOrMemoryWorker = (TributeOrMemoryWorker)dataFactory.GetDataFactory<TributeOrMemory>();
-        }
-
-        // GET api/TributeOrMemory/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var tributeOrMemoryRecord = _tributeOrMemoryWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(tributeOrMemoryRecord);
-
-            return json;
+            _tributeOrMemoryWorker = dataFactory.GetDataFactory<TributeOrMemory>();
         }
 
         // POST api/TributeOrMemory/CreateTributeOrMemory (Body is JSON)

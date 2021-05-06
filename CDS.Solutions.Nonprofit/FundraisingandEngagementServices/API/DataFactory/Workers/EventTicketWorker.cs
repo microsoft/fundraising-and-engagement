@@ -5,21 +5,23 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class EventTicketWorker : FactoryFloor<EventTicket>
+    public class EventTicketWorker : IFactoryFloor<EventTicket>
     {
+        private PaymentContext DataContext;
+
         public EventTicketWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override EventTicket GetById(Guid eventTicketId)
+        public EventTicket GetById(Guid eventTicketId)
         {
             return DataContext.EventTicket.FirstOrDefault(t => t.EvenTicketId == eventTicketId);
         }
 
 
 
-        public override int UpdateCreate(EventTicket eventTicket)
+        public int UpdateCreate(EventTicket eventTicket)
         {
 
             if (Exists(eventTicket.EvenTicketId))
@@ -41,7 +43,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             EventTicket existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -58,7 +60,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.EventTicket.Any(x => x.EvenTicketId == guid);
         }

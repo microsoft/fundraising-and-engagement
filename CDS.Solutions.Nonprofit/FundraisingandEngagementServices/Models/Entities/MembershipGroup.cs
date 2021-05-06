@@ -4,7 +4,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_MembershipGroup")]
+    [EntityLogicalName("msnfp_MembershipGroup")]
     public partial class MembershipGroup : PaymentEntity, IIdentifierEntity
     {
         public MembershipGroup()

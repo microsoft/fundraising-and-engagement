@@ -5,20 +5,22 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class PaymentScheduleWorker : FactoryFloor<PaymentSchedule>
+    public class PaymentScheduleWorker : IFactoryFloor<PaymentSchedule>
     {
+        private PaymentContext DataContext;
+
         public PaymentScheduleWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override PaymentSchedule GetById(Guid recordID)
+        public PaymentSchedule GetById(Guid recordID)
         {
             return DataContext.PaymentSchedule.FirstOrDefault(c => c.PaymentScheduleId == recordID);
         }
 
 
-        public override int UpdateCreate(PaymentSchedule updateRecord)
+        public int UpdateCreate(PaymentSchedule updateRecord)
         {
             if (Exists(updateRecord.PaymentScheduleId))
             {
@@ -40,7 +42,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             PaymentSchedule existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -58,7 +60,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
         }
 
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.PaymentSchedule.Any(x => x.PaymentScheduleId == guid);
         }

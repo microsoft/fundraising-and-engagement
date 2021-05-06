@@ -1,6 +1,6 @@
 {
-  "IatsAgentCode": "TE8288",
-  "IatsPassword": "mcrm56130",
+  "IatsAgentCode": "TEST88",
+  "IatsPassword": "TEST88",
   "AdyenCheckoutUrl": "https://checkout-test.adyen.com/checkout/v40",
   "AdyenUrl": "https://pal-test.adyen.com/pal/servlet/Payment/v30",
   "IsBankProcess": false,
@@ -17,7 +17,7 @@
   "AccountType": "Other",
   "CcType": null,
   "AccountNumberFormat": "None",
-  "CcExpMmYy": "1020",
+  "CcExpMmYy": "1027",
   "CreditCardNo": "4111111111111111",
   "CVC": "121",
   "Amount": "3",

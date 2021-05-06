@@ -4,7 +4,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_EventDonation")]
+    [EntityLogicalName("msnfp_EventDonation")]
     public partial class EventDonation : PaymentEntity, IIdentifierEntity
     {
         [EntityNameMap("msnfp_EventDonationid")]

@@ -5,21 +5,23 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class ReceiptStackWorker : FactoryFloor<ReceiptStack>
+    public class ReceiptStackWorker : IFactoryFloor<ReceiptStack>
     {
+        private PaymentContext DataContext;
+
         public ReceiptStackWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override ReceiptStack GetById(Guid recordID)
+        public ReceiptStack GetById(Guid recordID)
         {
             return DataContext.ReceiptStack.FirstOrDefault(c => c.ReceiptStackId == recordID);
         }
 
 
-       
-        public override int UpdateCreate(ReceiptStack updateRecord)
+
+        public int UpdateCreate(ReceiptStack updateRecord)
         {
             if (Exists(updateRecord.ReceiptStackId))
             {
@@ -42,7 +44,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             ReceiptStack existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -59,7 +61,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.ReceiptStack.Any(x => x.ReceiptStackId == guid);
         }

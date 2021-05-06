@@ -4,8 +4,8 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_paymentmethod")]
-    public partial class PaymentMethod : ContactPaymentEntity, IIdentifierEntity
+    [EntityLogicalName("msnfp_paymentmethod")]
+    public partial class PaymentMethod : PaymentEntity, IContactPaymentEntity, IIdentifierEntity
     {
         public PaymentMethod()
         {
@@ -13,6 +13,11 @@ namespace FundraisingandEngagement.Models.Entities
             PaymentSchedules = new HashSet<PaymentSchedule>();
             Transactions = new HashSet<Transaction>();
         }
+
+        [EntityReferenceMap("msnfp_CustomerId")]
+        public Guid? CustomerId { get; set; }
+
+        public int? CustomerIdType { get; set; }
 
         [EntityNameMap("msnfp_paymentmethodId")]
         public Guid PaymentMethodId { get; set; }
@@ -57,16 +62,11 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_CcLast4")]
         public string CcLast4 { get; set; }
 
-        [EntityNameMap("msnfp_expirydate")]
-        public DateTime? CcExpDate { get; set; }
-
         [EntityNameMap("msnfp_ccexpmmyy")]
         public string CcExpMmYy { get; set; }
 
         [EntityOptionSetMap("msnfp_CcBrandCode")]
         public int? CcBrandCode { get; set; }
-
-
 
         [EntityNameMap("msnfp_BankName")]
         public string BankName { get; set; }
@@ -83,10 +83,10 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_Identifier")]
         public string Identifier { get; set; }
 
-		[EntityNameMap("msnfp_isreusable")]
-		public bool? IsReusable { get; set; }
+        [EntityNameMap("msnfp_isreusable")]
+        public bool? IsReusable { get; set; }
 
-		[EntityNameMap("msnfp_FirstName")]
+        [EntityNameMap("msnfp_FirstName")]
         public string FirstName { get; set; }
 
         [EntityNameMap("msnfp_LastName")]
@@ -105,16 +105,16 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_authtoken")]
         public string AuthToken { get; set; }
 
-		[EntityNameMap("msnfp_abafinancialinstitutionname")]
-		public string AbaFinancialInstitutionName { get; set; }
+        [EntityNameMap("msnfp_abafinancialinstitutionname")]
+        public string AbaFinancialInstitutionName { get; set; }
 
         [EntityOptionSetMap("msnfp_type")]
         public int? Type { get; set; }
 
         [EntityNameMap("msnfp_nameonbankaccount")]
-		public string NameAsItAppearsOnTheAccount { get; set; }
+        public string NameAsItAppearsOnTheAccount { get; set; }
 
-		public virtual PaymentProcessor PaymentProcessor { get; set; }
+        public virtual PaymentProcessor PaymentProcessor { get; set; }
 
         public virtual ICollection<EventPackage> EventPackages { get; set; }
 

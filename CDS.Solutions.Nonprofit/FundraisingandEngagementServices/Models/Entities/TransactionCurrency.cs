@@ -6,7 +6,7 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("TransactionCurrency")]
+    [EntityLogicalName("TransactionCurrency")]
     public class TransactionCurrency : PaymentEntity
     {
         [EntityNameMap("TransactionCurrencyId")]
@@ -28,8 +28,6 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("ExchangeRate")]
         public decimal? ExchangeRate { get; set; }
 
-        public bool? IsBase { get; set; }
-
-		public virtual ICollection<Transaction> Transactions { get; set; }
-	}
+        public virtual ICollection<Transaction> Transactions { get; set; }
+    }
 }

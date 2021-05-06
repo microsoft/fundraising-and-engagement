@@ -1,42 +1,24 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
 using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ContactController : ControllerBase
     {
-        private static ContactWorker _contactWorker;
+        private static IFactoryFloor<Contact> _contactWorker;
 
-        public ContactController(DataFactory dataFactory)
+        public ContactController(IDataFactory dataFactory)
         {
-            _contactWorker = (ContactWorker)dataFactory.GetDataFactory<Contact>();
+            _contactWorker = dataFactory.GetDataFactory<Contact>();
         }
-
-        // GET api/Contact/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var retrievedRecord = _contactWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(retrievedRecord);
-
-            return json;
-        }
-
-
 
         // POST api/Contact/CreateContact (Body is JSON)
         [HttpPost]

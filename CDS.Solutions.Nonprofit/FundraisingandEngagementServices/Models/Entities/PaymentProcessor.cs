@@ -5,7 +5,7 @@ using FundraisingandEngagement.Models.Enums;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_PaymentProcessor")]
+    [EntityLogicalName("msnfp_PaymentProcessor")]
     public partial class PaymentProcessor : PaymentEntity, IIdentifierEntity
     {
         public PaymentProcessor()
@@ -17,11 +17,11 @@ namespace FundraisingandEngagement.Models.Entities
 
         [EntityNameMap("msnfp_paymentprocessorid")]
         public Guid PaymentProcessorId { get; set; }
-		
-		[EntityOptionSetMap("msnfp_BankRunFileFormat")]
-		public int? BankRunFileFormat { get; set; }
 
-		[EntityNameMap("msnfp_Name")]
+        [EntityOptionSetMap("msnfp_BankRunFileFormat")]
+        public int? BankRunFileFormat { get; set; }
+
+        [EntityNameMap("msnfp_Name")]
         public string Name { get; set; }
 
         [EntityNameMap("msnfp_Identifier")]
@@ -36,7 +36,7 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_AdyenMerchantAccount")]
         public string AdyenMerchantAccount { get; set; }
 
-        [EntityNameMap("msnfp_AdyenPassword")]
+        [EntityNameMap("msnfp_AdyenUsername")]
         public string AdyenUsername { get; set; }
 
         [EntityNameMap("msnfp_AdyenPassword")]
@@ -84,14 +84,14 @@ namespace FundraisingandEngagement.Models.Entities
         [EntityNameMap("msnfp_bmooriginatorid")]
         public string BmoOriginatorId { get; set; }
 
-		[EntityNameMap("msnfp_abaremittername")]
-		public string AbaRemitterName { get; set; }
+        [EntityNameMap("msnfp_abaremittername")]
+        public string AbaRemitterName { get; set; }
 
-		[EntityNameMap("msnfp_abausername")]
-		public string AbaUserName { get; set; }
+        [EntityNameMap("msnfp_abausername")]
+        public string AbaUserName { get; set; }
 
-		[EntityNameMap("msnfp_abausernumber")]
-		public string AbaUserNumber { get; set; }
+        [EntityNameMap("msnfp_abausernumber")]
+        public string AbaUserNumber { get; set; }
 
 
         public virtual ICollection<Configuration> Configuration { get; set; }

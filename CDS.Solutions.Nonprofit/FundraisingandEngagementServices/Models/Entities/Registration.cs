@@ -4,17 +4,21 @@ using FundraisingandEngagement.Models.Attributes;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	[EntityLogicalName("msnfp_registration")]
-    public partial class Registration : ContactPaymentEntity, IIdentifierEntity
+    [EntityLogicalName("msnfp_registration")]
+    public partial class Registration : PaymentEntity, IContactPaymentEntity, IIdentifierEntity
     {
         public Registration()
         {
             Response = new HashSet<Response>();
         }
 
-        [EntityNameMap("msnfp_registrationid")]
+        [EntityNameMap("msnfp_registrationid", PushToDataverse = true)]
         public Guid RegistrationId { get; set; }
 
+        [EntityReferenceMap("msnfp_customerid")] // case matters here
+        public Guid? CustomerId { get; set; }
+
+        public int? CustomerIdType { get; set; }
 
         [EntityReferenceMap("msnfp_EventId")]
         [EntityLogicalName("msnfp_Event")]
@@ -90,7 +94,7 @@ namespace FundraisingandEngagement.Models.Entities
         public string Address_Country { get; set; }
         public string Team { get; set; }
 
-        [EntityReferenceMap("msnfp_EventTableId")]
+        [EntityReferenceMap("msnfp_tableid")]
         [EntityLogicalName("msnfp_EventTable")]
         public Guid? TableId { get; set; }
 

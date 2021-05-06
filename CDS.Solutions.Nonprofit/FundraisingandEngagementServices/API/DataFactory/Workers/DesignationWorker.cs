@@ -5,14 +5,16 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class DesignationWorker : FactoryFloor<Designation>
+    public class DesignationWorker : IFactoryFloor<Designation>
     {
+        private PaymentContext DataContext;
+
         public DesignationWorker(PaymentContext context)
         {
             DataContext = context;
         }
 
-        public override Designation GetById(Guid DesignationId)
+        public Designation GetById(Guid DesignationId)
         {
             return DataContext.Designation.FirstOrDefault(t => t.DesignationId == DesignationId);
         }
@@ -43,7 +45,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int UpdateCreate(Designation updateRecord)
+        public int UpdateCreate(Designation updateRecord)
         {
             if (Exists(updateRecord.DesignationId))
             {
@@ -65,7 +67,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override int Delete(Guid guid)
+        public int Delete(Guid guid)
         {
             Designation existingRecord = GetById(guid);
             if (existingRecord != null)
@@ -82,7 +84,7 @@ namespace FundraisingandEngagement.DataFactory.Workers
             }
         }
 
-        public override bool Exists(Guid guid)
+        public bool Exists(Guid guid)
         {
             return DataContext.Designation.Any(x => x.DesignationId == guid);
         }

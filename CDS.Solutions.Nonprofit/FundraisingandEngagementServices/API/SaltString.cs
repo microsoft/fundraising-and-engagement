@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.Options;
-//using FundraisingandEngagement.Config;
-using FundraisingandEngagement.Utils.ConfigModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+//using FundraisingandEngagement.Config;
+using FundraisingandEngagement.Utils.ConfigModels;
+using Microsoft.Extensions.Options;
 
 namespace FundraisingandEngagement.Services
 {
@@ -22,19 +22,18 @@ namespace FundraisingandEngagement.Services
 
         public SaltStringConfig Options { get; } //set only via Secret Manager
 
-        public bool AdminP2PKeyMatched(string input)
-        {
-            var saltedString = SaltInputString(input);
-			return String.Compare(saltedString, Options.SaltedP2PAdminKey, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0;
-        }
-
         public bool ApiKeyMatched(string input)
         {
             var saltedinput = SaltInputString(input);
-			return String.Compare(saltedinput, Options.SaltedGatewayAPIKey, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0;
-		}
+            if (string.IsNullOrEmpty(saltedinput))
+            {
+                // This should never happen, but let's put in an extra assert so that we can be sure we'll never get a match when Options.SaltedGatewayAPIKey is empty (which is allowed)
+                throw new InvalidOperationException("Hashed key is empty");
+            }
+            return String.Compare(saltedinput, Options.SaltedGatewayAPIKey, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0;
+        }
 
-		public string SaltInputString(string input)
+        public string SaltInputString(string input)
         {
 
 
@@ -61,11 +60,10 @@ namespace FundraisingandEngagement.Services
                 // On .NET Core, the Default property always returns the UTF8Encoding.
                 //return System.Text.Encoding.Unicode.GetString(tdes.Key);
 
-                return System.Text.Encoding.Default.GetString(tdes.Key);
-
+                return Encoding.Default.GetString(tdes.Key);
             }
             catch
-            {}
+            { }
             finally
             {
                 // Clear the buffers

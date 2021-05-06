@@ -5,87 +5,89 @@ using FundraisingandEngagement.Models.Entities;
 
 namespace FundraisingandEngagement.DataFactory.Workers
 {
-	public class BankRunWorker : FactoryFloor<BankRun>
-	{
-		public BankRunWorker(PaymentContext context)
-		{
-			DataContext = context;
-		}
+    public class BankRunWorker : IFactoryFloor<BankRun>
+    {
+        private PaymentContext DataContext;
 
-		public override BankRun GetById(Guid BankRunId)
-		{
-			return DataContext.BankRun.FirstOrDefault(t => t.BankRunId == BankRunId);
-		}
+        public BankRunWorker(PaymentContext context)
+        {
+            DataContext = context;
+        }
 
-		public string UpdateCreateReturnGuid(BankRun updateRecord)
-		{
-			if (Exists(updateRecord.BankRunId))
-			{
-				updateRecord.SyncDate = DateTime.Now;
+        public BankRun GetById(Guid BankRunId)
+        {
+            return DataContext.BankRun.FirstOrDefault(t => t.BankRunId == BankRunId);
+        }
 
-				DataContext.BankRun.Update(updateRecord);
-				DataContext.SaveChanges();
+        public string UpdateCreateReturnGuid(BankRun updateRecord)
+        {
+            if (Exists(updateRecord.BankRunId))
+            {
+                updateRecord.SyncDate = DateTime.Now;
 
-				return updateRecord.BankRunId.ToString();
-			}
-			else if (updateRecord != null)
-			{
+                DataContext.BankRun.Update(updateRecord);
+                DataContext.SaveChanges();
 
-				DataContext.BankRun.Add(updateRecord);
+                return updateRecord.BankRunId.ToString();
+            }
+            else if (updateRecord != null)
+            {
 
-				DataContext.SaveChanges();
+                DataContext.BankRun.Add(updateRecord);
 
-				return updateRecord.BankRunId.ToString();
-			}
-			else
-			{
-				return "Error";
-			}
-		}
+                DataContext.SaveChanges();
 
-		public override int UpdateCreate(BankRun updateRecord)
-		{
-			if (Exists(updateRecord.BankRunId))
-			{
-				updateRecord.SyncDate = DateTime.Now;
+                return updateRecord.BankRunId.ToString();
+            }
+            else
+            {
+                return "Error";
+            }
+        }
 
-				DataContext.BankRun.Update(updateRecord);
-				return DataContext.SaveChanges();
-			}
-			else if (updateRecord != null)
-			{
-				updateRecord.CreatedOn = DateTime.Now;
-				DataContext.BankRun.Add(updateRecord);
+        public int UpdateCreate(BankRun updateRecord)
+        {
+            if (Exists(updateRecord.BankRunId))
+            {
+                updateRecord.SyncDate = DateTime.Now;
 
-				return DataContext.SaveChanges();
-			}
-			else
-			{
-				return 0;
-			}
-		}
+                DataContext.BankRun.Update(updateRecord);
+                return DataContext.SaveChanges();
+            }
+            else if (updateRecord != null)
+            {
+                updateRecord.CreatedOn = DateTime.Now;
+                DataContext.BankRun.Add(updateRecord);
 
-		public override int Delete(Guid guid)
-		{
-			BankRun existingRecord = GetById(guid);
-			if (existingRecord != null)
-			{
-				existingRecord.Deleted = true;
-				existingRecord.DeletedDate = DateTime.Now;
+                return DataContext.SaveChanges();
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
-				DataContext.Update(existingRecord);
-				return DataContext.SaveChanges();
-			}
-			else
-			{
-				return 0;
-			}
-		}
+        public int Delete(Guid guid)
+        {
+            BankRun existingRecord = GetById(guid);
+            if (existingRecord != null)
+            {
+                existingRecord.Deleted = true;
+                existingRecord.DeletedDate = DateTime.Now;
 
-		public override bool Exists(Guid guid)
-		{
-			return DataContext.BankRun.Any(x => x.BankRunId == guid);
-		}
+                DataContext.Update(existingRecord);
+                return DataContext.SaveChanges();
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
-	}
+        public bool Exists(Guid guid)
+        {
+            return DataContext.BankRun.Any(x => x.BankRunId == guid);
+        }
+
+    }
 }

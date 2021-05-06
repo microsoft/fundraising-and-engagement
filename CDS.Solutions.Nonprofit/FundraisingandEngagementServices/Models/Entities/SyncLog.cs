@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FundraisingandEngagement.Models.Entities
 {
-	public class SyncLog
+    public class SyncLog
     {
-		[Key]
+        [Key]
         public Guid SyncExceptionId { get; set; }
 
         public Guid? PaymentEntityPK { get; set; }
@@ -16,10 +16,8 @@ namespace FundraisingandEngagement.Models.Entities
 
         public string StackTrace { get; set; }
 
-		public Guid? TransactionId { get; set; }
+        public Guid? TransactionId { get; set; }
 
-		public DateTime? CreatedOn { get; set; }
-
-		public virtual Transaction Transaction { get; set; }
-	}
+        public DateTime? CreatedOn { get; set; }
+    }
 }

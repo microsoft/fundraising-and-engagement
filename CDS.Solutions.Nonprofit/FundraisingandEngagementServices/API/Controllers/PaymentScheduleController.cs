@@ -1,53 +1,34 @@
 ﻿using System;
-using System.Net;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using FundraisingandEngagement.Models.Entities;
+using FundraisingandEngagement;
+using FundraisingandEngagement.Data;
 using FundraisingandEngagement.DataFactory;
 using FundraisingandEngagement.DataFactory.Workers;
-using Newtonsoft.Json;
+using FundraisingandEngagement.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FundraisingandEngagement.Data;
-using FundraisingandEngagement;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentScheduleController : ControllerBase    
+    public class PaymentScheduleController : ControllerBase
     {
         private readonly PaymentContext context;
-        private readonly PaymentScheduleWorker _paymentScheduleWorker;
+        private readonly IFactoryFloor<PaymentSchedule> _paymentScheduleWorker;
         private readonly ILogger<PaymentScheduleController> logger;
 
-        public PaymentScheduleController(DataFactory dataFactory, PaymentContext context, ILogger<PaymentScheduleController> logger)
+        public PaymentScheduleController(IDataFactory dataFactory, PaymentContext context, ILogger<PaymentScheduleController> logger)
         {
-            _paymentScheduleWorker = (PaymentScheduleWorker)dataFactory.GetDataFactory<PaymentSchedule>();
+            _paymentScheduleWorker = dataFactory.GetDataFactory<PaymentSchedule>();
             this.context = context;
             this.logger = logger;
         }
-
-
-        // GET api/PaymentSchedule/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(Guid id)
-        {
-            if (id == null)
-            {
-                return "";
-            }
-
-            var retrievedRecord = _paymentScheduleWorker.GetById(id);
-
-            string json = JsonConvert.SerializeObject(retrievedRecord);
-
-            return json;
-        }
-
-
 
         // POST api/PaymentSchedule/CreatePaymentSchedule (Body is JSON)
         [HttpPost]
@@ -94,35 +75,35 @@ namespace API.Controllers
             var query = from paymentSchedule in this.context.PaymentSchedule
                         where paymentSchedule.PaymentScheduleId == updatedRecord.PaymentScheduleId
                         select new
-						{
-							paymentSchedule.NextPaymentDate,
-							paymentSchedule.LastPaymentDate,
-						};
+                        {
+                            paymentSchedule.NextPaymentDate,
+                            paymentSchedule.LastPaymentDate,
+                        };
 
             var existingRecords = await query.SingleOrDefaultAsync();
 
-			if (existingRecords != null)
-			{
-				var existingNextPaymentDate = existingRecords.NextPaymentDate;
-				var existingLastPaymentDate = existingRecords.LastPaymentDate;
+            if (existingRecords != null)
+            {
+                var existingNextPaymentDate = existingRecords.NextPaymentDate;
+                var existingLastPaymentDate = existingRecords.LastPaymentDate;
 
-				if (updatedRecord.NextPaymentDate < existingNextPaymentDate || (updatedRecord.NextPaymentDate == null && existingNextPaymentDate != null))
-				{
-					this.logger.LogInformation($"Overwrting NextPaymentDate value '{updatedRecord.NextPaymentDate}' with '{existingNextPaymentDate}'");
+                if (updatedRecord.NextPaymentDate < existingNextPaymentDate || (updatedRecord.NextPaymentDate == null && existingNextPaymentDate != null))
+                {
+                    this.logger.LogInformation($"Overwrting NextPaymentDate value '{updatedRecord.NextPaymentDate}' with '{existingNextPaymentDate}'");
 
-					updatedRecord.NextPaymentDate = existingNextPaymentDate;
-				}
+                    updatedRecord.NextPaymentDate = existingNextPaymentDate;
+                }
 
-				if (updatedRecord.LastPaymentDate < existingLastPaymentDate || (updatedRecord.LastPaymentDate == null && existingLastPaymentDate != null))
-				{
-					this.logger.LogInformation($"Overwrting LastPaymentDate value '{updatedRecord.LastPaymentDate}' with '{existingLastPaymentDate}'");
+                if (updatedRecord.LastPaymentDate < existingLastPaymentDate || (updatedRecord.LastPaymentDate == null && existingLastPaymentDate != null))
+                {
+                    this.logger.LogInformation($"Overwrting LastPaymentDate value '{updatedRecord.LastPaymentDate}' with '{existingLastPaymentDate}'");
 
-					updatedRecord.LastPaymentDate = existingLastPaymentDate;
-				}
-			}
+                    updatedRecord.LastPaymentDate = existingLastPaymentDate;
+                }
+            }
 
-			// Create the entity record in the Azure SQL DB:
-			_paymentScheduleWorker.UpdateCreate(updatedRecord);
+            // Create the entity record in the Azure SQL DB:
+            _paymentScheduleWorker.UpdateCreate(updatedRecord);
         }
 
 
