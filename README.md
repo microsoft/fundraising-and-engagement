@@ -5,7 +5,7 @@ Hello ISVs, SIs, Partners and Nonprofits - Your success is our goal. This reposi
 
 Microsoft Tech for Social Impact provides affordable and accessible cloud technology to nonprofits, and delivers purpose-built solutions for nonprofit partners and organizations by leveraging the power of the entire Microsoft platform including Business Applications, Modern Workplace, and Azure technologies.
 
-Fundraising and Engagement for Dynamics 365 Sales, a Microsoft solution built with MISSION CRM, helps nonprofits modernize donor and constituent engagement to increase mission impact.
+Fundraising and Engagement for Dynamics 365 Sales helps nonprofits modernize donor and constituent engagement to increase mission impact.
 
 Fundraising and Engagement allows nonprofits to better understand supporters, strengthen donations and revenue management, and more precisely target and personalize communications.  A more proactive, strategic nonprofit team will identify special funding opportunities and potential major givers and increase donor loyalty and lifetime giving. By streamlining the manual work of nonprofit backoffice staff, nonprofit organizations experience greater fundraising efficiency and cost savings at a critical time where business process automation can directly translate into time spent on program and mission delivery. From faster monthly recurring gift management to data processing and imports driven by Azure, move your nonprofit staff from reactive to strategic. 
 
