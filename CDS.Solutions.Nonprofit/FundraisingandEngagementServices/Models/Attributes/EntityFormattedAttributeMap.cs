@@ -2,6 +2,7 @@
 
 namespace FundraisingandEngagement.Models.Attributes
 {
+    [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
     public class EntityFormattedAttributeMap : Attribute
     {
         private string attribute;

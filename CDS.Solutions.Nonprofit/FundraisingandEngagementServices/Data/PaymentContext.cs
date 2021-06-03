@@ -1293,12 +1293,6 @@ namespace FundraisingandEngagement.Data
                     .HasConstraintName("FK__Response__Paymen__7EF6D905")
                     .OnDelete(DeleteBehavior.SetNull);
 
-                entity.HasOne(d => d.RegistrationPackage)
-                    .WithMany(p => p.Response)
-                    .HasForeignKey(d => d.RegistrationPackageId)
-                    .HasConstraintName("FK__Response__Regist__7FEAFD3E")
-                    .OnDelete(DeleteBehavior.SetNull);
-
                 entity.HasOne(d => d.Transaction)
                     .WithMany(p => p.Response)
                     .HasForeignKey(d => d.TransactionId)
