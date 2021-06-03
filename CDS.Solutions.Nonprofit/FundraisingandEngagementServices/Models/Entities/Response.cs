@@ -15,10 +15,6 @@ namespace FundraisingandEngagement.Models.Entities
 
         public Guid? PaymentScheduleId { get; set; }
 
-        [EntityReferenceMap("msnfp_EventPackageId", PushToDataverse = false)]
-        [EntityLogicalName("msnfp_eventpackage")]
-        public Guid? RegistrationPackageId { get; set; }
-
         [EntityNameMap("msnfp_response", PushToDataverse = true)]
         public string Result { get; set; }
 
@@ -26,8 +22,6 @@ namespace FundraisingandEngagement.Models.Entities
         public string Identifier { get; set; }
 
         public virtual PaymentSchedule PaymentSchedule { get; set; }
-
-        public virtual Registration RegistrationPackage { get; set; }
 
         public virtual Transaction Transaction { get; set; }
     }

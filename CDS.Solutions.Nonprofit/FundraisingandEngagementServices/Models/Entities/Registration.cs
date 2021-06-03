@@ -7,11 +7,6 @@ namespace FundraisingandEngagement.Models.Entities
     [EntityLogicalName("msnfp_registration")]
     public partial class Registration : PaymentEntity, IContactPaymentEntity, IIdentifierEntity
     {
-        public Registration()
-        {
-            Response = new HashSet<Response>();
-        }
-
         [EntityNameMap("msnfp_registrationid", PushToDataverse = true)]
         public Guid RegistrationId { get; set; }
 
@@ -103,6 +98,5 @@ namespace FundraisingandEngagement.Models.Entities
         public virtual EventPackage EventPackage { get; set; }
         public virtual EventTicket EventTicket { get; set; }
         public virtual Ticket Ticket { get; set; }
-        public virtual ICollection<Response> Response { get; set; }
     }
 }

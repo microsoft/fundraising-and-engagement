@@ -4,14 +4,16 @@ using FundraisingandEngagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FundraisingandEngagement.Data.Migrations
 {
     [DbContext(typeof(PaymentContext))]
-    partial class PaymentContextModelSnapshot : ModelSnapshot
+    [Migration("20210531142057_remove Response.RegistrationPackageId")]
+    partial class removeResponseRegistrationPackageId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2506,25 +2508,6 @@ namespace FundraisingandEngagement.Data.Migrations
                         .HasColumnType("nvarchar(6)")
                         .HasMaxLength(6);
 
-                    b.Property<string>("AdyenCheckoutUrl")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("AdyenMerchantAccount")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("AdyenPassword")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("AdyenUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AdyenUsername")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
                     b.Property<int?>("BankRunFileFormat")
                         .HasColumnType("int");
 
@@ -2598,13 +2581,6 @@ namespace FundraisingandEngagement.Data.Migrations
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("WorldPayClientKey")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WorldPayServiceKey")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
 
                     b.HasKey("PaymentProcessorId");
 
