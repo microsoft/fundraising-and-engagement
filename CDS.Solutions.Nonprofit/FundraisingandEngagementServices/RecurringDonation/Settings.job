@@ -1,4 +1,0 @@
-{
-    // runs once a day at 04:15 (UTC time)
-    "schedule": "0 15 4 * * *"
-}

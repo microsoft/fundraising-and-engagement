@@ -1,0 +1,1604 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1008.15138",
+      "templateHash": "14763618672886833734"
+    }
+  },
+  "parameters": {
+    "clientName": {
+      "type": "string",
+      "metadata": {
+        "description": "Client short name. Eg: dwb"
+      },
+      "minLength": 1
+    },
+    "env": {
+      "type": "string",
+      "defaultValue": "prod",
+      "metadata": {
+        "description": "Environment short name"
+      },
+      "allowedValues": [
+        "dev",
+        "qa",
+        "test",
+        "uat",
+        "prod"
+      ],
+      "minLength": 1
+    },
+    "AppRegistrationClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "Application (client) ID associated with the Fundraising and Engagement App registration. Eg: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      },
+      "maxLength": 50,
+      "minLength": 25
+    },
+    "AppRegistrationClientSecret": {
+      "type": "secureString",
+      "metadata": {
+        "description": "Client secret associated with the Fundraising and Engagement App registration"
+      },
+      "minLength": 10
+    },
+    "CrmOrganizationURL": {
+      "type": "string",
+      "metadata": {
+        "description": "Eg: https://abcdefgh.api.crm3.dynamics.com"
+      },
+      "minLength": 10
+    },
+    "CrmTenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "This information should be obtain from your Dynamics instance. Eg: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      },
+      "maxLength": 50,
+      "minLength": 25
+    },
+    "releaseVersion": {
+      "type": "string",
+      "defaultValue": "v2.0.3.0",
+      "allowedValues": [
+        "v2.0.3.0",
+        "v1.2.3.3",
+        "custom"
+      ],
+      "metadata": {
+        "description": "Fundraising and Engagement Azure release version"
+      }
+    }
+  },
+  "functions": [],
+  "variables": {
+    "useManagedIdentity": false,
+    "_installWebResources": "[equals(parameters('releaseVersion'), 'v2.0.3.0')]",
+    "_releaseUrl": "https://github.com/microsoft/fundraising-and-engagement/releases/download",
+    "backgroundServiceArtifactUrl": "[format('{0}/{1}/BackgroundServices.zip', variables('_releaseUrl'), parameters('releaseVersion'))]",
+    "paymentServiceArtifactUrl": "[format('{0}/{1}/PaymentService.zip', variables('_releaseUrl'), parameters('releaseVersion'))]",
+    "recurringServiceArtifactUrl": "[format('{0}/{1}/RecurringDonation.zip', variables('_releaseUrl'), parameters('releaseVersion'))]"
+  },
+  "resources": [
+    {
+      "condition": "[variables('useManagedIdentity')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-identity-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "identityName": {
+            "value": "[format('{0}-tsi-installer-{1}', toLower(parameters('clientName')), parameters('env'))]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "10292788878729949247"
+            }
+          },
+          "parameters": {
+            "identityName": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "variables": {
+            "sqlServerContributorRoleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437')]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+              "apiVersion": "2018-11-30",
+              "name": "[parameters('identityName')]",
+              "location": "[resourceGroup().location]"
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2020-08-01-preview",
+              "name": "[guid(parameters('identityName'), variables('sqlServerContributorRoleDefinitionId'), resourceGroup().id)]",
+              "properties": {
+                "roleDefinitionId": "[variables('sqlServerContributorRoleDefinitionId')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName'))).principalId]",
+                "principalType": "ServicePrincipal"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "indentityName": {
+              "type": "string",
+              "value": "[parameters('identityName')]"
+            },
+            "indentityObjectId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName'))).clientId]"
+            },
+            "indentityId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-sql-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "clientName": {
+            "value": "[parameters('clientName')]"
+          },
+          "env": {
+            "value": "[parameters('env')]"
+          },
+          "managedIdentityObjectId": {
+            "value": "[if(variables('useManagedIdentity'), reference(resourceId('Microsoft.Resources/deployments', format('{0}-identity-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.indentityObjectId.value, '')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "531481110302790445"
+            }
+          },
+          "parameters": {
+            "clientName": {
+              "type": "string"
+            },
+            "env": {
+              "type": "string"
+            },
+            "pswdSeed": {
+              "type": "secureString",
+              "defaultValue": "[newGuid()]"
+            },
+            "managedIdentityObjectId": {
+              "type": "string",
+              "defaultValue": ""
+            }
+          },
+          "functions": [],
+          "variables": {
+            "administratorLogin": "FundraisingSAUser",
+            "administratorLoginPassword": "[format('P{0}x!', uniqueString(resourceGroup().id, parameters('pswdSeed')))]",
+            "dbName": "[format('{0}-db-{1}', toLower(parameters('clientName')), parameters('env'))]"
+          },
+          "resources": [
+            {
+              "condition": "[not(equals(parameters('managedIdentityObjectId'), ''))]",
+              "type": "Microsoft.Sql/servers/administrators",
+              "apiVersion": "2020-11-01-preview",
+              "name": "[format('{0}/{1}', format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env')), 'ActiveDirectory')]",
+              "properties": {
+                "administratorType": "ActiveDirectory",
+                "login": "AADAdmin",
+                "sid": "[parameters('managedIdentityObjectId')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Sql/servers/firewallRules",
+              "apiVersion": "2020-11-01-preview",
+              "name": "[format('{0}/{1}', format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env')), 'AllowAllWindowsAzureIps')]",
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Sql/servers",
+              "apiVersion": "2020-11-01-preview",
+              "name": "[format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env'))]",
+              "location": "[resourceGroup().location]",
+              "tags": {
+                "displayName": "Sql Server",
+                "project": "F&E"
+              },
+              "properties": {
+                "publicNetworkAccess": "Enabled",
+                "administratorLogin": "[variables('administratorLogin')]",
+                "administratorLoginPassword": "[variables('administratorLoginPassword')]",
+                "minimalTlsVersion": "1.2"
+              }
+            },
+            {
+              "type": "Microsoft.Sql/servers/databases",
+              "apiVersion": "2014-04-01",
+              "name": "[format('{0}/{1}', format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env')), variables('dbName'))]",
+              "location": "[resourceGroup().location]",
+              "tags": {
+                "Purpose": "Data"
+              },
+              "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "edition": "Standard",
+                "maxSizeBytes": "107374182400",
+                "requestedServiceObjectiveName": "S1"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env')))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "sqlServerName": {
+              "type": "string",
+              "value": "[format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env'))]"
+            },
+            "sqlServerAddress": {
+              "type": "string",
+              "value": "[format('{0}{1}', format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env')), environment().suffixes.sqlServerHostname)]"
+            },
+            "tsiDBName": {
+              "type": "string",
+              "value": "[variables('dbName')]"
+            },
+            "tsiDbId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Sql/servers/databases', split(format('{0}/{1}', format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env')), variables('dbName')), '/')[0], split(format('{0}/{1}', format('{0}-sqlserver-{1}', toLower(parameters('clientName')), parameters('env')), variables('dbName')), '/')[1])]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-identity-{1}', toLower(parameters('clientName')), parameters('env')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "clientName": {
+            "value": "[parameters('clientName')]"
+          },
+          "env": {
+            "value": "[parameters('env')]"
+          },
+          "AppRegistrationClientId": {
+            "value": "[parameters('AppRegistrationClientId')]"
+          },
+          "AppRegistrationClientSecret": {
+            "value": "[parameters('AppRegistrationClientSecret')]"
+          },
+          "CrmOrganizationURL": {
+            "value": "[parameters('CrmOrganizationURL')]"
+          },
+          "CrmTenantId": {
+            "value": "[parameters('CrmTenantId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "14003823356150302532"
+            }
+          },
+          "parameters": {
+            "clientName": {
+              "type": "string",
+              "metadata": {
+                "description": "Client short name.  Eg: dwb"
+              },
+              "minLength": 1
+            },
+            "env": {
+              "type": "string",
+              "defaultValue": "prod",
+              "metadata": {
+                "description": "Environment short name"
+              },
+              "allowedValues": [
+                "dev",
+                "qa",
+                "test",
+                "uat",
+                "prod"
+              ],
+              "minLength": 1
+            },
+            "AppRegistrationClientId": {
+              "type": "string"
+            },
+            "AppRegistrationClientSecret": {
+              "type": "secureString"
+            },
+            "CrmOrganizationURL": {
+              "type": "string"
+            },
+            "CrmTenantId": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults",
+              "apiVersion": "2019-09-01",
+              "name": "[format('{0}-vault-{1}', parameters('clientName'), parameters('env'))]",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": true,
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [],
+                "sku": {
+                  "name": "standard",
+                  "family": "A"
+                }
+              },
+              "tags": {
+                "displayName": "Key Vault"
+              }
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2016-10-01",
+              "name": "[format('{0}/Crm--CrmOrganizationURL', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]",
+              "properties": {
+                "value": "[parameters('CrmOrganizationURL')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2016-10-01",
+              "name": "[format('{0}/Crm--CrmApplicationID', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]",
+              "properties": {
+                "value": "[parameters('AppRegistrationClientId')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2016-10-01",
+              "name": "[format('{0}/Crm--CrmTenantId', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]",
+              "properties": {
+                "value": "[parameters('CrmTenantId')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2016-10-01",
+              "name": "[format('{0}/ConnectionSecrets--DataverseConnectionString', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]",
+              "properties": {
+                "value": "[format('AuthType=ClientSecret; Url={0}; ClientId={1}; ClientSecret={2};RequireNewInstance=true', parameters('CrmOrganizationURL'), parameters('AppRegistrationClientId'), parameters('AppRegistrationClientSecret'))]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2016-10-01",
+              "name": "[format('{0}/ConnectionSecrets--DataverseClientSecret', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]",
+              "properties": {
+                "value": "[parameters('AppRegistrationClientSecret')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "keyvaultName": {
+              "type": "string",
+              "value": "[format('{0}-vault-{1}', parameters('clientName'), parameters('env'))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "clientName": {
+            "value": "[parameters('clientName')]"
+          },
+          "env": {
+            "value": "[parameters('env')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "2643791356952357435"
+            }
+          },
+          "parameters": {
+            "clientName": {
+              "type": "string",
+              "metadata": {
+                "description": "Client short name.  Eg: dwb"
+              },
+              "minLength": 1
+            },
+            "env": {
+              "type": "string",
+              "defaultValue": "prod",
+              "metadata": {
+                "description": "Environment short name"
+              },
+              "allowedValues": [
+                "dev",
+                "qa",
+                "test",
+                "uat",
+                "prod"
+              ],
+              "minLength": 1
+            },
+            "secrets": {
+              "type": "array",
+              "defaultValue": [
+                {
+                  "key": "key",
+                  "value": "value"
+                }
+              ],
+              "minLength": 1
+            }
+          },
+          "functions": [],
+          "variables": {
+            "isSecretSet": "[not(equals(parameters('secrets')[0].key, 'key'))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults",
+              "apiVersion": "2019-09-01",
+              "name": "[format('{0}-pay-{1}', parameters('clientName'), parameters('env'))]",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": true,
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [],
+                "sku": {
+                  "name": "standard",
+                  "family": "A"
+                }
+              },
+              "tags": {
+                "displayName": "Payment Processing"
+              }
+            },
+            {
+              "condition": "[variables('isSecretSet')]",
+              "copy": {
+                "name": "keyvaultSecrets",
+                "count": "[length(parameters('secrets'))]"
+              },
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2019-09-01",
+              "name": "[format('{0}/{1}', format('{0}-pay-{1}', parameters('clientName'), parameters('env')), parameters('secrets')[copyIndex()].key)]",
+              "properties": {
+                "value": "[parameters('secrets')[copyIndex()].value]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', format('{0}-pay-{1}', parameters('clientName'), parameters('env')))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "name": {
+              "type": "string",
+              "value": "[format('{0}-pay-{1}', parameters('clientName'), parameters('env'))]"
+            },
+            "id": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.KeyVault/vaults', format('{0}-pay-{1}', parameters('clientName'), parameters('env')))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "clientName": {
+            "value": "[parameters('clientName')]"
+          },
+          "env": {
+            "value": "[parameters('env')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "12544704511182625590"
+            }
+          },
+          "parameters": {
+            "clientName": {
+              "type": "string",
+              "metadata": {
+                "description": "Client short name.  Eg: dwb"
+              },
+              "minLength": 1
+            },
+            "env": {
+              "type": "string",
+              "defaultValue": "prod",
+              "metadata": {
+                "description": "Environment short name"
+              },
+              "allowedValues": [
+                "dev",
+                "qa",
+                "test",
+                "uat",
+                "prod"
+              ],
+              "minLength": 1
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2019-06-01",
+              "name": "[format('{0}storage{1}', toLower(parameters('clientName')), parameters('env'))]",
+              "kind": "Storage",
+              "location": "[resourceGroup().location]",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "tags": {
+                "displayName": "Storage"
+              }
+            }
+          ],
+          "outputs": {
+            "name": {
+              "type": "string",
+              "value": "[format('{0}storage{1}', toLower(parameters('clientName')), parameters('env'))]"
+            },
+            "id": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', format('{0}storage{1}', toLower(parameters('clientName')), parameters('env')))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "clientName": {
+            "value": "[parameters('clientName')]"
+          },
+          "env": {
+            "value": "[parameters('env')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "54065209721677504"
+            }
+          },
+          "parameters": {
+            "clientName": {
+              "type": "string",
+              "metadata": {
+                "description": "Client short name.  Eg: dwb"
+              },
+              "minLength": 1
+            },
+            "env": {
+              "type": "string",
+              "defaultValue": "prod",
+              "metadata": {
+                "description": "Environment short name"
+              },
+              "allowedValues": [
+                "dev",
+                "qa",
+                "test",
+                "uat",
+                "prod"
+              ],
+              "minLength": 1
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2018-02-01",
+              "name": "[format('{0}-AppServicePlan-{1}', parameters('clientName'), parameters('env'))]",
+              "location": "[resourceGroup().location]",
+              "sku": {
+                "name": "S1"
+              },
+              "tags": {
+                "displayName": "AppsServicePlan"
+              },
+              "properties": {
+                "perSiteScaling": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+              }
+            },
+            {
+              "type": "Microsoft.Insights/components",
+              "apiVersion": "2015-05-01",
+              "name": "[format('{0}-AI-{1}', parameters('clientName'), parameters('env'))]",
+              "kind": "web",
+              "location": "[resourceGroup().location]",
+              "tags": {
+                "displayName": "Component Services-AI"
+              },
+              "properties": {
+                "Application_Type": "web"
+              }
+            },
+            {
+              "type": "Microsoft.Insights/autoscalesettings",
+              "apiVersion": "2015-04-01",
+              "name": "[format('{0}-autoscaling', format('{0}-AppServicePlan-{1}', parameters('clientName'), parameters('env')))]",
+              "location": "[resourceGroup().location]",
+              "tags": {
+                "[format('hidden-link:{0}', resourceId('Microsoft.Web/serverfarms', format('{0}-AppServicePlan-{1}', parameters('clientName'), parameters('env'))))]": "Resource",
+                "displayName": "AI AutoScale"
+              },
+              "properties": {
+                "name": "[format('{0}-autoscaling', format('{0}-AppServicePlan-{1}', parameters('clientName'), parameters('env')))]",
+                "profiles": [
+                  {
+                    "name": "Default",
+                    "capacity": {
+                      "minimum": "1",
+                      "maximum": "2",
+                      "default": "1"
+                    },
+                    "rules": [
+                      {
+                        "metricTrigger": {
+                          "metricName": "CpuPercentage",
+                          "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', format('{0}-AppServicePlan-{1}', parameters('clientName'), parameters('env')))]",
+                          "timeGrain": "PT1M",
+                          "statistic": "Average",
+                          "timeWindow": "PT10M",
+                          "timeAggregation": "Average",
+                          "operator": "GreaterThan",
+                          "threshold": 80
+                        },
+                        "scaleAction": {
+                          "direction": "Increase",
+                          "type": "ChangeCount",
+                          "value": "1",
+                          "cooldown": "PT10M"
+                        }
+                      },
+                      {
+                        "metricTrigger": {
+                          "metricName": "CpuPercentage",
+                          "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', format('{0}-AppServicePlan-{1}', parameters('clientName'), parameters('env')))]",
+                          "timeGrain": "PT1M",
+                          "statistic": "Average",
+                          "timeWindow": "PT1H",
+                          "timeAggregation": "Average",
+                          "operator": "LessThan",
+                          "threshold": 60
+                        },
+                        "scaleAction": {
+                          "direction": "Decrease",
+                          "type": "ChangeCount",
+                          "value": "1",
+                          "cooldown": "PT1H"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "enabled": false,
+                "targetResourceUri": "[resourceId('Microsoft.Web/serverfarms', format('{0}-AppServicePlan-{1}', parameters('clientName'), parameters('env')))]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', format('{0}-AppServicePlan-{1}', parameters('clientName'), parameters('env')))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "servicePlanId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/serverfarms', format('{0}-AppServicePlan-{1}', parameters('clientName'), parameters('env')))]"
+            },
+            "applicationIsightsId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Insights/components', format('{0}-AI-{1}', parameters('clientName'), parameters('env')))]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "clientName": {
+            "value": "[parameters('clientName')]"
+          },
+          "env": {
+            "value": "[parameters('env')]"
+          },
+          "keyvaultName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.keyvaultName.value]"
+          },
+          "sqlDatabaseName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-sql-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.tsiDBName.value]"
+          },
+          "sqlServerName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-sql-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.sqlServerName.value]"
+          },
+          "storageAccountId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.id.value]"
+          },
+          "storageAccountName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value]"
+          },
+          "appServicePlanId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.servicePlanId.value]"
+          },
+          "applicationInsightsId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.applicationIsightsId.value]"
+          },
+          "paymentKeyvaultUri": {
+            "value": "[format('https://{0}{1}', reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value, environment().suffixes.keyvaultDns)]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "4821787977462164555"
+            }
+          },
+          "parameters": {
+            "clientName": {
+              "type": "string",
+              "metadata": {
+                "description": "Client short name.  Eg: dwb"
+              },
+              "minLength": 1
+            },
+            "env": {
+              "type": "string",
+              "defaultValue": "prod",
+              "metadata": {
+                "description": "Environment short name"
+              },
+              "allowedValues": [
+                "dev",
+                "qa",
+                "test",
+                "uat",
+                "prod"
+              ],
+              "minLength": 1
+            },
+            "keyvaultName": {
+              "type": "string"
+            },
+            "paymentKeyvaultUri": {
+              "type": "string"
+            },
+            "sqlServerName": {
+              "type": "string"
+            },
+            "sqlDatabaseName": {
+              "type": "string"
+            },
+            "storageAccountId": {
+              "type": "string"
+            },
+            "storageAccountName": {
+              "type": "string"
+            },
+            "appServicePlanId": {
+              "type": "string"
+            },
+            "applicationInsightsId": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2020-12-01",
+              "name": "[format('{0}-BackgroundServices-{1}', parameters('clientName'), parameters('env'))]",
+              "location": "[resourceGroup().location]",
+              "kind": "functionapp",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "tags": {
+                "[format('hidden-related:{0}', parameters('appServicePlanId'))]": "Resource",
+                "displayName": "BackgroundServices"
+              },
+              "properties": {
+                "serverFarmId": "[parameters('appServicePlanId')]",
+                "httpsOnly": true,
+                "siteConfig": {
+                  "alwaysOn": true,
+                  "ftpsState": "Disabled",
+                  "minTlsVersion": "1.2",
+                  "localMySqlEnabled": false,
+                  "appSettings": [
+                    {
+                      "name": "KeyVaultName",
+                      "value": "[parameters('keyvaultName')]"
+                    },
+                    {
+                      "name": "FUNCTIONS_EXTENSION_VERSION",
+                      "value": "~3"
+                    },
+                    {
+                      "name": "FUNCTIONS_WORKER_RUNTIME",
+                      "value": "dotnet"
+                    },
+                    {
+                      "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                      "value": "[reference(parameters('applicationInsightsId'), '2015-05-01').InstrumentationKey]"
+                    },
+                    {
+                      "name": "ApplicationInsights:InstrumentationKey",
+                      "value": "[reference(parameters('applicationInsightsId'), '2015-05-01').InstrumentationKey]"
+                    },
+                    {
+                      "name": "AzureWebJobsStorage",
+                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}', parameters('storageAccountName'), listKeys(parameters('storageAccountId'), '2019-06-01').keys[0].value)]"
+                    },
+                    {
+                      "name": "AzureStorage",
+                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}', parameters('storageAccountName'), listKeys(parameters('storageAccountId'), '2019-06-01').keys[0].value)]"
+                    }
+                  ],
+                  "connectionStrings": [
+                    {
+                      "name": "PaymentContext",
+                      "connectionString": "[format('Data Source={0}{1};Initial Catalog={2}', parameters('sqlServerName'), environment().suffixes.sqlServerHostname, parameters('sqlDatabaseName'))]",
+                      "type": "SQLAzure"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2020-12-01",
+              "name": "[format('{0}-RecurringDonationApp-{1}', parameters('clientName'), parameters('env'))]",
+              "location": "[resourceGroup().location]",
+              "kind": "app",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "tags": {
+                "[format('hidden-related:{0}', parameters('appServicePlanId'))]": "Resource",
+                "displayName": "RecurringDonationApp"
+              },
+              "properties": {
+                "serverFarmId": "[parameters('appServicePlanId')]",
+                "httpsOnly": true,
+                "siteConfig": {
+                  "alwaysOn": true,
+                  "ftpsState": "Disabled",
+                  "localMySqlEnabled": false,
+                  "minTlsVersion": "1.2",
+                  "appSettings": [
+                    {
+                      "name": "KeyVaultName",
+                      "value": "[parameters('keyvaultName')]"
+                    },
+                    {
+                      "name": "PaymentKeyvaultUri",
+                      "value": "[parameters('paymentKeyvaultUri')]"
+                    },
+                    {
+                      "name": "FUNCTIONS_EXTENSION_VERSION",
+                      "value": "~3"
+                    },
+                    {
+                      "name": "FUNCTIONS_WORKER_RUNTIME",
+                      "value": "dotnet"
+                    },
+                    {
+                      "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                      "value": "[reference(parameters('applicationInsightsId'), '2015-05-01').InstrumentationKey]"
+                    },
+                    {
+                      "name": "ApplicationInsights:InstrumentationKey",
+                      "value": "[reference(parameters('applicationInsightsId'), '2015-05-01').InstrumentationKey]"
+                    }
+                  ],
+                  "connectionStrings": [
+                    {
+                      "name": "PaymentContext",
+                      "connectionString": "[format('Data Source={0}{1};Initial Catalog={2}', parameters('sqlServerName'), environment().suffixes.sqlServerHostname, parameters('sqlDatabaseName'))]",
+                      "type": "SQLAzure"
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "backgroundServicesId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/sites', format('{0}-BackgroundServices-{1}', parameters('clientName'), parameters('env')))]"
+            },
+            "backgroundServicesName": {
+              "type": "string",
+              "value": "[format('{0}-BackgroundServices-{1}', parameters('clientName'), parameters('env'))]"
+            },
+            "recurringDonationAppId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/sites', format('{0}-RecurringDonationApp-{1}', parameters('clientName'), parameters('env')))]"
+            },
+            "recurringDonationName": {
+              "type": "string",
+              "value": "[format('{0}-RecurringDonationApp-{1}', parameters('clientName'), parameters('env'))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-sql-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "clientName": {
+            "value": "[parameters('clientName')]"
+          },
+          "env": {
+            "value": "[parameters('env')]"
+          },
+          "defaultKeyvaultName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.keyvaultName.value]"
+          },
+          "storageAccountId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.id.value]"
+          },
+          "storageAccountName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value]"
+          },
+          "appServicePlanId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.servicePlanId.value]"
+          },
+          "applicationInsightsId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.applicationIsightsId.value]"
+          },
+          "paymentKeyvaultUri": {
+            "value": "[format('https://{0}{1}', reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value, environment().suffixes.keyvaultDns)]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "9075808360941025260"
+            }
+          },
+          "parameters": {
+            "clientName": {
+              "type": "string",
+              "metadata": {
+                "description": "Client short name.  Eg: dwb"
+              },
+              "minLength": 1
+            },
+            "env": {
+              "type": "string",
+              "defaultValue": "prod",
+              "metadata": {
+                "description": "Environment short name"
+              },
+              "allowedValues": [
+                "dev",
+                "qa",
+                "test",
+                "uat",
+                "prod"
+              ],
+              "minLength": 1
+            },
+            "defaultKeyvaultName": {
+              "type": "string"
+            },
+            "paymentKeyvaultUri": {
+              "type": "string"
+            },
+            "storageAccountId": {
+              "type": "string"
+            },
+            "storageAccountName": {
+              "type": "string"
+            },
+            "appServicePlanId": {
+              "type": "string"
+            },
+            "applicationInsightsId": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2020-12-01",
+              "name": "[format('{0}-Payment-Service-{1}', parameters('clientName'), parameters('env'))]",
+              "location": "[resourceGroup().location]",
+              "kind": "functionapp",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "tags": {
+                "[format('hidden-related:{0}', parameters('appServicePlanId'))]": "Resource",
+                "displayName": "Payment Service"
+              },
+              "properties": {
+                "serverFarmId": "[parameters('appServicePlanId')]",
+                "httpsOnly": true,
+                "siteConfig": {
+                  "alwaysOn": true,
+                  "ftpsState": "Disabled",
+                  "localMySqlEnabled": false,
+                  "minTlsVersion": "1.2",
+                  "appSettings": [
+                    {
+                      "name": "KeyVaultName",
+                      "value": "[parameters('defaultKeyvaultName')]"
+                    },
+                    {
+                      "name": "PaymentKeyvaultUri",
+                      "value": "[parameters('paymentKeyvaultUri')]"
+                    },
+                    {
+                      "name": "FUNCTIONS_EXTENSION_VERSION",
+                      "value": "~3"
+                    },
+                    {
+                      "name": "FUNCTIONS_WORKER_RUNTIME",
+                      "value": "dotnet-isolated"
+                    },
+                    {
+                      "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                      "value": "[reference(parameters('applicationInsightsId'), '2015-05-01').InstrumentationKey]"
+                    },
+                    {
+                      "name": "ApplicationInsights:InstrumentationKey",
+                      "value": "[reference(parameters('applicationInsightsId'), '2015-05-01').InstrumentationKey]"
+                    },
+                    {
+                      "name": "AzureWebJobsStorage",
+                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}', parameters('storageAccountName'), listKeys(parameters('storageAccountId'), '2019-06-01').keys[0].value)]"
+                    },
+                    {
+                      "name": "AzureStorage",
+                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}', parameters('storageAccountName'), listKeys(parameters('storageAccountId'), '2019-06-01').keys[0].value)]"
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "serviceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/sites', format('{0}-Payment-Service-{1}', parameters('clientName'), parameters('env')))]"
+            },
+            "serviceName": {
+              "type": "string",
+              "value": "[format('{0}-Payment-Service-{1}', parameters('clientName'), parameters('env'))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-keyvault-background-access-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "keyvaultName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.keyvaultName.value]"
+          },
+          "assigments": {
+            "value": [
+              {
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.backgroundServicesId.value]",
+                "permissions": {
+                  "secrets": [
+                    "get",
+                    "list"
+                  ]
+                }
+              },
+              {
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.recurringDonationAppId.value]",
+                "permissions": {
+                  "secrets": [
+                    "get",
+                    "list"
+                  ]
+                }
+              },
+              {
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.serviceId.value]",
+                "permissions": {
+                  "secrets": [
+                    "get",
+                    "list"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "11917207799421710766"
+            }
+          },
+          "parameters": {
+            "keyvaultName": {
+              "type": "string"
+            },
+            "assigments": {
+              "type": "array",
+              "defaultValue": [
+                {
+                  "appId": "appId",
+                  "permissions": {
+                    "secrets": [
+                      "get",
+                      "list"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "functions": [],
+          "variables": {
+            "isAssigmentsSet": "[not(equals(parameters('assigments')[0].appId, 'appId'))]"
+          },
+          "resources": [
+            {
+              "condition": "[variables('isAssigmentsSet')]",
+              "type": "Microsoft.KeyVault/vaults/accessPolicies",
+              "apiVersion": "2021-04-01-preview",
+              "name": "[format('{0}/add', parameters('keyvaultName'))]",
+              "properties": {
+                "copy": [
+                  {
+                    "name": "accessPolicies",
+                    "count": "[length(parameters('assigments'))]",
+                    "input": {
+                      "tenantId": "[subscription().tenantId]",
+                      "objectId": "[reference(parameters('assigments')[copyIndex('accessPolicies')].appId, '2018-11-01', 'Full').identity.principalId]",
+                      "permissions": "[parameters('assigments')[copyIndex('accessPolicies')].permissions]"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-keyvault-payment-access-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "keyvaultName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value]"
+          },
+          "assigments": {
+            "value": [
+              {
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.serviceId.value]",
+                "permissions": {
+                  "secrets": [
+                    "set",
+                    "get",
+                    "list"
+                  ]
+                }
+              },
+              {
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.recurringDonationAppId.value]",
+                "permissions": {
+                  "secrets": [
+                    "get",
+                    "list"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "11917207799421710766"
+            }
+          },
+          "parameters": {
+            "keyvaultName": {
+              "type": "string"
+            },
+            "assigments": {
+              "type": "array",
+              "defaultValue": [
+                {
+                  "appId": "appId",
+                  "permissions": {
+                    "secrets": [
+                      "get",
+                      "list"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "functions": [],
+          "variables": {
+            "isAssigmentsSet": "[not(equals(parameters('assigments')[0].appId, 'appId'))]"
+          },
+          "resources": [
+            {
+              "condition": "[variables('isAssigmentsSet')]",
+              "type": "Microsoft.KeyVault/vaults/accessPolicies",
+              "apiVersion": "2021-04-01-preview",
+              "name": "[format('{0}/add', parameters('keyvaultName'))]",
+              "properties": {
+                "copy": [
+                  {
+                    "name": "accessPolicies",
+                    "count": "[length(parameters('assigments'))]",
+                    "input": {
+                      "tenantId": "[subscription().tenantId]",
+                      "objectId": "[reference(parameters('assigments')[copyIndex('accessPolicies')].appId, '2018-11-01', 'Full').identity.principalId]",
+                      "permissions": "[parameters('assigments')[copyIndex('accessPolicies')].permissions]"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env')))]"
+      ]
+    },
+    {
+      "condition": "[variables('_installWebResources')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-app-deploy-reccuring-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "applicationName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.recurringDonationName.value]"
+          },
+          "artifactUrl": {
+            "value": "[variables('recurringServiceArtifactUrl')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "13354758765406612425"
+            }
+          },
+          "parameters": {
+            "applicationName": {
+              "type": "string"
+            },
+            "artifactUrl": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Web/sites/extensions",
+              "apiVersion": "2021-01-15",
+              "name": "[format('{0}/ZipDeploy', parameters('applicationName'))]",
+              "properties": {
+                "packageUri": "[parameters('artifactUrl')]"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env')))]"
+      ]
+    },
+    {
+      "condition": "[variables('_installWebResources')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-app-deploy-background-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "applicationName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.backgroundServicesName.value]"
+          },
+          "artifactUrl": {
+            "value": "[variables('backgroundServiceArtifactUrl')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "13354758765406612425"
+            }
+          },
+          "parameters": {
+            "applicationName": {
+              "type": "string"
+            },
+            "artifactUrl": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Web/sites/extensions",
+              "apiVersion": "2021-01-15",
+              "name": "[format('{0}/ZipDeploy', parameters('applicationName'))]",
+              "properties": {
+                "packageUri": "[parameters('artifactUrl')]"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env')))]"
+      ]
+    },
+    {
+      "condition": "[variables('_installWebResources')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[format('{0}-app-deploy-payment-{1}', toLower(parameters('clientName')), parameters('env'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "applicationName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.serviceName.value]"
+          },
+          "artifactUrl": {
+            "value": "[variables('paymentServiceArtifactUrl')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "13354758765406612425"
+            }
+          },
+          "parameters": {
+            "applicationName": {
+              "type": "string"
+            },
+            "artifactUrl": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Web/sites/extensions",
+              "apiVersion": "2021-01-15",
+              "name": "[format('{0}/ZipDeploy', parameters('applicationName'))]",
+              "properties": {
+                "packageUri": "[parameters('artifactUrl')]"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env')))]"
+      ]
+    }
+  ]
+}
