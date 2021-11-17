@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "14763618672886833734"
+      "templateHash": "9093594908177996490"
     }
   },
   "parameters": {
@@ -60,6 +60,14 @@
       },
       "maxLength": 50,
       "minLength": 25
+    },
+    "sqlServerAdminLogin": {
+      "type": "string",
+      "defaultValue": "FundraisingSAUser",
+      "metadata": {
+        "description": "Admin account user name to be used to login into SQL Server"
+      },
+      "minLength": 3
     },
     "releaseVersion": {
       "type": "string",
@@ -169,6 +177,9 @@
           "clientName": {
             "value": "[parameters('clientName')]"
           },
+          "administratorLogin": {
+            "value": "[parameters('sqlServerAdminLogin')]"
+          },
           "env": {
             "value": "[parameters('env')]"
           },
@@ -183,7 +194,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1008.15138",
-              "templateHash": "531481110302790445"
+              "templateHash": "17583191815104493471"
             }
           },
           "parameters": {
@@ -197,6 +208,9 @@
               "type": "secureString",
               "defaultValue": "[newGuid()]"
             },
+            "administratorLogin": {
+              "type": "string"
+            },
             "managedIdentityObjectId": {
               "type": "string",
               "defaultValue": ""
@@ -204,7 +218,6 @@
           },
           "functions": [],
           "variables": {
-            "administratorLogin": "FundraisingSAUser",
             "administratorLoginPassword": "[format('P{0}x!', uniqueString(resourceGroup().id, parameters('pswdSeed')))]",
             "dbName": "[format('{0}-db-{1}', toLower(parameters('clientName')), parameters('env'))]"
           },
@@ -246,7 +259,7 @@
               },
               "properties": {
                 "publicNetworkAccess": "Enabled",
-                "administratorLogin": "[variables('administratorLogin')]",
+                "administratorLogin": "[parameters('administratorLogin')]",
                 "administratorLoginPassword": "[variables('administratorLoginPassword')]",
                 "minimalTlsVersion": "1.2"
               }
