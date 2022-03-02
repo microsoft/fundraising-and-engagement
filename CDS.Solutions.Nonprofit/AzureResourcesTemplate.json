@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "14041959284217711454"
+      "templateHash": "14955944507566393640"
     }
   },
   "parameters": {
@@ -63,24 +63,11 @@
     },
     "sqlServerAdminLogin": {
       "type": "string",
+      "defaultValue": "FundraisingSAUser",
       "metadata": {
         "description": "Admin account user name to be used to login into SQL Server"
       },
       "minLength": 3
-    },
-    "sqlServerAdminLoginPassword": {
-      "type": "secureString",
-      "metadata": {
-        "description": "Admin account password. Must contains upper and lower letters, with numbers and symbols"
-      },
-      "minLength": 8
-    },
-    "databasePassword": {
-      "type": "secureString",
-      "metadata": {
-        "description": "Database password (will be used by application to connect to the database). Must contains upper and lower letters, with numbers and symbols"
-      },
-      "minLength": 8
     },
     "releaseVersion": {
       "type": "string",
@@ -191,14 +178,11 @@
           "clientName": {
             "value": "[parameters('clientName')]"
           },
-          "env": {
-            "value": "[parameters('env')]"
-          },
           "administratorLogin": {
             "value": "[parameters('sqlServerAdminLogin')]"
           },
-          "administratorLoginPassword": {
-            "value": "[parameters('sqlServerAdminLoginPassword')]"
+          "env": {
+            "value": "[parameters('env')]"
           },
           "managedIdentityObjectId": {
             "value": "[if(variables('useManagedIdentity'), reference(resourceId('Microsoft.Resources/deployments', format('{0}-identity-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.indentityObjectId.value, '')]"
@@ -211,7 +195,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1008.15138",
-              "templateHash": "11218039665750789052"
+              "templateHash": "17583191815104493471"
             }
           },
           "parameters": {
@@ -221,11 +205,12 @@
             "env": {
               "type": "string"
             },
+            "pswdSeed": {
+              "type": "secureString",
+              "defaultValue": "[newGuid()]"
+            },
             "administratorLogin": {
               "type": "string"
-            },
-            "administratorLoginPassword": {
-              "type": "secureString"
             },
             "managedIdentityObjectId": {
               "type": "string",
@@ -234,6 +219,7 @@
           },
           "functions": [],
           "variables": {
+            "administratorLoginPassword": "[format('P{0}x!', uniqueString(resourceGroup().id, parameters('pswdSeed')))]",
             "dbName": "[format('{0}-db-{1}', toLower(parameters('clientName')), parameters('env'))]"
           },
           "resources": [
@@ -275,7 +261,7 @@
               "properties": {
                 "publicNetworkAccess": "Enabled",
                 "administratorLogin": "[parameters('administratorLogin')]",
-                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "administratorLoginPassword": "[variables('administratorLoginPassword')]",
                 "minimalTlsVersion": "1.2"
               }
             },
@@ -349,12 +335,6 @@
           },
           "CrmTenantId": {
             "value": "[parameters('CrmTenantId')]"
-          },
-          "paymentContextUserID": {
-            "value": "[format('{0}_{1}_user', toLower(parameters('clientName')), toLower(parameters('env')))]"
-          },
-          "paymentContextPassword": {
-            "value": "[parameters('databasePassword')]"
           }
         },
         "template": {
@@ -364,7 +344,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1008.15138",
-              "templateHash": "13981647157368607164"
+              "templateHash": "14003823356150302532"
             }
           },
           "parameters": {
@@ -401,12 +381,6 @@
             },
             "CrmTenantId": {
               "type": "string"
-            },
-            "paymentContextUserID": {
-              "type": "string"
-            },
-            "paymentContextPassword": {
-              "type": "secureString"
             }
           },
           "functions": [],
@@ -481,28 +455,6 @@
               "name": "[format('{0}/ConnectionSecrets--DataverseClientSecret', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]",
               "properties": {
                 "value": "[parameters('AppRegistrationClientSecret')]"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]"
-              ]
-            },
-            {
-              "type": "Microsoft.KeyVault/vaults/secrets",
-              "apiVersion": "2016-10-01",
-              "name": "[format('{0}/ConnectionSecrets--PaymentContextUserID', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]",
-              "properties": {
-                "value": "[parameters('paymentContextUserID')]"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]"
-              ]
-            },
-            {
-              "type": "Microsoft.KeyVault/vaults/secrets",
-              "apiVersion": "2016-10-01",
-              "name": "[format('{0}/ConnectionSecrets--PaymentContextPassword', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]",
-              "properties": {
-                "value": "[parameters('paymentContextPassword')]"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', format('{0}-vault-{1}', parameters('clientName'), parameters('env')))]"
