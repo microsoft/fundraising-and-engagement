@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "9093594908177996490"
+      "templateHash": "14955944507566393640"
     }
   },
   "parameters": {
@@ -71,8 +71,9 @@
     },
     "releaseVersion": {
       "type": "string",
-      "defaultValue": "v2.0.3.0",
+      "defaultValue": "v2.0.3.1",
       "allowedValues": [
+        "v2.0.3.1",
         "v2.0.3.0",
         "v1.2.3.3",
         "custom"
@@ -85,7 +86,7 @@
   "functions": [],
   "variables": {
     "useManagedIdentity": false,
-    "_installWebResources": "[equals(parameters('releaseVersion'), 'v2.0.3.0')]",
+    "_installWebResources": "[and(not(equals(parameters('releaseVersion'), 'custom')), not(equals(parameters('releaseVersion'), 'v1.2.3.3')))]",
     "_releaseUrl": "https://github.com/microsoft/fundraising-and-engagement/releases/download",
     "backgroundServiceArtifactUrl": "[format('{0}/{1}/BackgroundServices.zip', variables('_releaseUrl'), parameters('releaseVersion'))]",
     "paymentServiceArtifactUrl": "[format('{0}/{1}/PaymentService.zip', variables('_releaseUrl'), parameters('releaseVersion'))]",
