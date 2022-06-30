@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.4.1008.15138",
-      "templateHash": "14955944507566393640"
+      "version": "0.7.4.23292",
+      "templateHash": "17041595513818804873"
     }
   },
   "parameters": {
@@ -71,8 +71,9 @@
     },
     "releaseVersion": {
       "type": "string",
-      "defaultValue": "v2.0.3.1",
+      "defaultValue": "v2.0.3.3",
       "allowedValues": [
+        "v2.0.3.3",
         "v2.0.3.1",
         "v2.0.3.0",
         "v1.2.3.3",
@@ -83,7 +84,6 @@
       }
     }
   },
-  "functions": [],
   "variables": {
     "useManagedIdentity": false,
     "_installWebResources": "[and(not(equals(parameters('releaseVersion'), 'custom')), not(equals(parameters('releaseVersion'), 'v1.2.3.3')))]",
@@ -96,7 +96,7 @@
     {
       "condition": "[variables('useManagedIdentity')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-identity-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -114,8 +114,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "10292788878729949247"
+              "version": "0.7.4.23292",
+              "templateHash": "9491588826228677026"
             }
           },
           "parameters": {
@@ -123,7 +123,6 @@
               "type": "string"
             }
           },
-          "functions": [],
           "variables": {
             "sqlServerContributorRoleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437')]"
           },
@@ -167,7 +166,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-sql-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -185,7 +184,7 @@
             "value": "[parameters('env')]"
           },
           "managedIdentityObjectId": {
-            "value": "[if(variables('useManagedIdentity'), reference(resourceId('Microsoft.Resources/deployments', format('{0}-identity-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.indentityObjectId.value, '')]"
+            "value": "[if(variables('useManagedIdentity'), reference(resourceId('Microsoft.Resources/deployments', format('{0}-identity-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-10-01').outputs.indentityObjectId.value, '')]"
           }
         },
         "template": {
@@ -194,8 +193,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "17583191815104493471"
+              "version": "0.7.4.23292",
+              "templateHash": "15328833416524189791"
             }
           },
           "parameters": {
@@ -217,7 +216,6 @@
               "defaultValue": ""
             }
           },
-          "functions": [],
           "variables": {
             "administratorLoginPassword": "[format('P{0}x!', uniqueString(resourceGroup().id, parameters('pswdSeed')))]",
             "dbName": "[format('{0}-db-{1}', toLower(parameters('clientName')), parameters('env'))]"
@@ -310,7 +308,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -343,8 +341,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "14003823356150302532"
+              "version": "0.7.4.23292",
+              "templateHash": "4748316234993795261"
             }
           },
           "parameters": {
@@ -383,7 +381,6 @@
               "type": "string"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.KeyVault/vaults",
@@ -472,7 +469,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -493,8 +490,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "2643791356952357435"
+              "version": "0.7.4.23292",
+              "templateHash": "4520890737885676861"
             }
           },
           "parameters": {
@@ -531,7 +528,6 @@
               "minLength": 1
             }
           },
-          "functions": [],
           "variables": {
             "isSecretSet": "[not(equals(parameters('secrets')[0].key, 'key'))]"
           },
@@ -588,7 +584,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -609,8 +605,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "12544704511182625590"
+              "version": "0.7.4.23292",
+              "templateHash": "346557578437060640"
             }
           },
           "parameters": {
@@ -637,7 +633,6 @@
               "minLength": 1
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Storage/storageAccounts",
@@ -668,7 +663,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -689,8 +684,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "54065209721677504"
+              "version": "0.7.4.23292",
+              "templateHash": "5884388804011802283"
             }
           },
           "parameters": {
@@ -717,7 +712,6 @@
               "minLength": 1
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Web/serverfarms",
@@ -836,7 +830,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -851,28 +845,28 @@
             "value": "[parameters('env')]"
           },
           "keyvaultName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.keyvaultName.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.keyvaultName.value]"
           },
           "sqlDatabaseName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-sql-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.tsiDBName.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-sql-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.tsiDBName.value]"
           },
           "sqlServerName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-sql-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.sqlServerName.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-sql-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.sqlServerName.value]"
           },
           "storageAccountId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.id.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.id.value]"
           },
           "storageAccountName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.name.value]"
           },
           "appServicePlanId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.servicePlanId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.servicePlanId.value]"
           },
           "applicationInsightsId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.applicationIsightsId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.applicationIsightsId.value]"
           },
           "paymentKeyvaultUri": {
-            "value": "[format('https://{0}{1}', reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value, environment().suffixes.keyvaultDns)]"
+            "value": "[format('https://{0}{1}', reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.name.value, environment().suffixes.keyvaultDns)]"
           }
         },
         "template": {
@@ -881,8 +875,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "4821787977462164555"
+              "version": "0.7.4.23292",
+              "templateHash": "5072517404370726907"
             }
           },
           "parameters": {
@@ -933,7 +927,6 @@
               "type": "string"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Web/sites",
@@ -1084,7 +1077,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1099,22 +1092,22 @@
             "value": "[parameters('env')]"
           },
           "defaultKeyvaultName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.keyvaultName.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.keyvaultName.value]"
           },
           "storageAccountId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.id.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.id.value]"
           },
           "storageAccountName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-storage-account-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.name.value]"
           },
           "appServicePlanId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.servicePlanId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.servicePlanId.value]"
           },
           "applicationInsightsId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.applicationIsightsId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-service-plan-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.applicationIsightsId.value]"
           },
           "paymentKeyvaultUri": {
-            "value": "[format('https://{0}{1}', reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value, environment().suffixes.keyvaultDns)]"
+            "value": "[format('https://{0}{1}', reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.name.value, environment().suffixes.keyvaultDns)]"
           }
         },
         "template": {
@@ -1123,8 +1116,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "9075808360941025260"
+              "version": "0.7.4.23292",
+              "templateHash": "3735257652980706997"
             }
           },
           "parameters": {
@@ -1169,7 +1162,6 @@
               "type": "string"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Web/sites",
@@ -1251,7 +1243,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-keyvault-background-access-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1260,12 +1252,12 @@
         "mode": "Incremental",
         "parameters": {
           "keyvaultName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.keyvaultName.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.keyvaultName.value]"
           },
           "assigments": {
             "value": [
               {
-                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.backgroundServicesId.value]",
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.backgroundServicesId.value]",
                 "permissions": {
                   "secrets": [
                     "get",
@@ -1274,7 +1266,7 @@
                 }
               },
               {
-                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.recurringDonationAppId.value]",
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.recurringDonationAppId.value]",
                 "permissions": {
                   "secrets": [
                     "get",
@@ -1283,7 +1275,7 @@
                 }
               },
               {
-                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.serviceId.value]",
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.serviceId.value]",
                 "permissions": {
                   "secrets": [
                     "get",
@@ -1300,8 +1292,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "11917207799421710766"
+              "version": "0.7.4.23292",
+              "templateHash": "672105153780905263"
             }
           },
           "parameters": {
@@ -1323,7 +1315,6 @@
               ]
             }
           },
-          "functions": [],
           "variables": {
             "isAssigmentsSet": "[not(equals(parameters('assigments')[0].appId, 'appId'))]"
           },
@@ -1358,7 +1349,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-keyvault-payment-access-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1367,12 +1358,12 @@
         "mode": "Incremental",
         "parameters": {
           "keyvaultName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.name.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-keyvault-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.name.value]"
           },
           "assigments": {
             "value": [
               {
-                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.serviceId.value]",
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.serviceId.value]",
                 "permissions": {
                   "secrets": [
                     "set",
@@ -1382,7 +1373,7 @@
                 }
               },
               {
-                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.recurringDonationAppId.value]",
+                "appId": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.recurringDonationAppId.value]",
                 "permissions": {
                   "secrets": [
                     "get",
@@ -1399,8 +1390,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "11917207799421710766"
+              "version": "0.7.4.23292",
+              "templateHash": "672105153780905263"
             }
           },
           "parameters": {
@@ -1422,7 +1413,6 @@
               ]
             }
           },
-          "functions": [],
           "variables": {
             "isAssigmentsSet": "[not(equals(parameters('assigments')[0].appId, 'appId'))]"
           },
@@ -1458,7 +1448,7 @@
     {
       "condition": "[variables('_installWebResources')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-app-deploy-reccuring-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1467,7 +1457,7 @@
         "mode": "Incremental",
         "parameters": {
           "applicationName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.recurringDonationName.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.recurringDonationName.value]"
           },
           "artifactUrl": {
             "value": "[variables('recurringServiceArtifactUrl')]"
@@ -1479,8 +1469,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "13354758765406612425"
+              "version": "0.7.4.23292",
+              "templateHash": "17112725525725695774"
             }
           },
           "parameters": {
@@ -1491,7 +1481,6 @@
               "type": "string"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Web/sites/extensions",
@@ -1511,7 +1500,7 @@
     {
       "condition": "[variables('_installWebResources')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-app-deploy-background-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1520,7 +1509,7 @@
         "mode": "Incremental",
         "parameters": {
           "applicationName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.backgroundServicesName.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-apps-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.backgroundServicesName.value]"
           },
           "artifactUrl": {
             "value": "[variables('backgroundServiceArtifactUrl')]"
@@ -1532,8 +1521,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "13354758765406612425"
+              "version": "0.7.4.23292",
+              "templateHash": "17112725525725695774"
             }
           },
           "parameters": {
@@ -1544,7 +1533,6 @@
               "type": "string"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Web/sites/extensions",
@@ -1564,7 +1552,7 @@
     {
       "condition": "[variables('_installWebResources')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2020-10-01",
       "name": "[format('{0}-app-deploy-payment-{1}', toLower(parameters('clientName')), parameters('env'))]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -1573,7 +1561,7 @@
         "mode": "Incremental",
         "parameters": {
           "applicationName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env'))), '2020-06-01').outputs.serviceName.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-payment-{1}', toLower(parameters('clientName')), parameters('env')))).outputs.serviceName.value]"
           },
           "artifactUrl": {
             "value": "[variables('paymentServiceArtifactUrl')]"
@@ -1585,8 +1573,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "13354758765406612425"
+              "version": "0.7.4.23292",
+              "templateHash": "17112725525725695774"
             }
           },
           "parameters": {
@@ -1597,7 +1585,6 @@
               "type": "string"
             }
           },
-          "functions": [],
           "resources": [
             {
               "type": "Microsoft.Web/sites/extensions",
