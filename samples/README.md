@@ -4,8 +4,8 @@ The table below provides an overview of the sample contents.
 | Sample | Description |
 | - | - |
 | FundraisingandEngagement.PowerBI.Templates.zip | Contains several Power BI report templates and accompanying script to generate views |
-| FundraisingandEngagement.Sample.Data.zip | Sample data for Fundraising and Engagement (see [Deployment Guide](../docs/FundraisingandEngagement.Deployment.Guide.docx) for installation instructions) |
-| FundraisingAndEngagement.LinkedInSalesNavigator.zip | Configuration of LinkedIn Sales Navigator for Fundraising and Engagement (see [LinkedIn Sales Navigator Installation Guide](../docs/FundraisingandEngagement.LinkedIn.Sales.Navigator.Installation.Guide.docx) for instructions) |
+| FundraisingandEngagement.Sample.Data.zip | Sample data for Fundraising and Engagement (see [Deployment Guide](https://docs.microsoft.com/en-us/dynamics365/industry/nonprofit/fundraising-engagement-deploy#import-sample-data-optional) for installation instructions) |
+| FundraisingAndEngagement.LinkedInSalesNavigator.zip | Configuration of LinkedIn Sales Navigator for Fundraising and Engagement (see [LinkedIn Sales Navigator Installation Guide](https://docs.microsoft.com/en-us/dynamics365/industry/nonprofit/linkedin-sales-navigator-configure) for instructions) |
 
 ### Power BI Report Templates Included
 
